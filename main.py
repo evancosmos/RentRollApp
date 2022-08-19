@@ -1,32 +1,85 @@
+#Read text from PDFs
 from pdfminer.high_level import extract_text
+#Read text from images https://www.geeksforgeeks.org/how-to-extract-text-from-images-with-python/
+from PIL import Image
+from pytesseract import pytesseract
+
+#TODO: Fix duplicated print, implment ODR
 
 class rentRollEntity:
-    def __init__(self, leaseNum, operatingName, sqrFt, status, baseRentCat, beginDate, endDate, rate, baseRentNotes):
-        self.leaseNum = 0
-        self.operatingName = 0
+    def __init__(self):
+        self.leaseNum = ""
+        self.operatingName = ""
         self.sqrFt = 0
-        self.status = 0
-        self.baseRentCat = 0
-        self.beginDate = 0
-        self.endDate = 0
-        self.rate = 0
-        self.baseRentNotes = 0
+        self.status = ""
+        self.renOption = ""
+        self.leaseExpire = ""
+        self.renNotice = ""
+        self.origCom = 0
+
+    def printRoll(self):
+        print("Lease number: " + self.leaseNum + "\n Operating Name: " + self.operatingName + "\n Square Feet: " + self.sqrFt + "\n Status: " + self.status + "\n Renewal Option: " + self.renOption + "\n Lease Expires " + self.leaseExpire + "\n Renewal Notice: " + self.renNotice + "\n Orig Com: " + self.origCom + "\n\n")
 
 class rentRolls:
     def __init__(self) -> None:
-        self.rolls = None
+        self.rolls = []
 
     def addRoll(self, newRoll):
-        self.rolls = self.rolls + newRoll
+        self.rolls.append(newRoll)
 
+    def listRolls(self):
+        for roll in self.rolls:
+            roll.printRoll(roll)
+
+def readImage(filename):
+    allRoll = rentRolls()
+    return allRoll
+
+def readPDF(filename):
+    text = extract_text(filename)
+    textLines = text.splitlines()
+    #Once "TCC" is read from the start of a line, make a new roll
+    allRoll = rentRolls()
+    newRoll = rentRollEntity
+    itemCount = 0
+    for line in textLines[:500]:
+        if(line == ''):
+            itemCount = itemCount - 1
+        elif(line[0:3] == "TCC"): #A new item is made
+            newRoll.leaseNum = line
+        elif(itemCount == 1):
+            newRoll.operatingName = line
+        elif(itemCount == 2):
+            newRoll.sqrFt = line
+        elif(itemCount == 3):
+            newRoll.status = line
+        elif(itemCount == 4):
+            pass
+        elif(itemCount == 5):
+            newRoll.renOption = line
+        elif(itemCount == 6):
+            pass
+        elif(itemCount == 7):
+            newRoll.leaseExpire = line
+        elif(itemCount == 8):
+            pass
+        elif(itemCount == 9):
+            newRoll.renNotice = line
+        elif(itemCount == 10):
+            pass
+        elif(itemCount == 11):
+            newRoll.origCom = line
+            allRoll.addRoll(newRoll)
+            itemCount = -1
+        else:
+            itemCount = itemCount - 1
+        itemCount += 1
+
+    allRoll.listRolls()
+    return allRoll
 
 def main():
-    text = extract_text('2018-05-16 - Tamarack - Base Rent Roll.pdf')
-    textLines = text.splitlines()
-    #Once TCC is read make a new item
-    mainRoll = rentRolls()
-    for lines in textLines[:200]:
-        print(lines)
+    readPDF('2018-05-16 - Tamarack - Base Rent Roll.pdf')
 
 if __name__ == "__main__":
     main()
