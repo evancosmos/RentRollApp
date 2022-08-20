@@ -16,25 +16,15 @@ from firebase_admin import db
 #Web App framework for python
 from flask import Flask, request
 
-#Firebase START
-def firebaseConnect():
-    cred = credentials.Certificate("./firebasekeys.json")
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
-    })
-
-    ref = db.reference('/Test12')
-    print(ref.get())
-
 #FLASK START
-app = Flask(__name__)
+""" app = Flask(__name__)
     
 @app.route("/", methods=['GET', 'POST'])
 def helloworld():
     if request.method == 'POST':
         f = request.files['the_file'] #Get the file, send it to database
 
-    return "<p>Hello World<p> <button>Upload</button> <button>Upload</button>"
+    return "<p>Hello World<p> <button>Upload</button> <button>Upload</button>" """
 #FLASK END
 
 #TODO: Train ODR, Set up database connections, Set up frontend connections.
@@ -77,7 +67,23 @@ class rentRoll: #The collection of items on a rent roll
             newMasterDict[str(id)] = roll.retAsDict()
             id += 1
         return newMasterDict
-            
+
+#Firebase START
+def firebaseConnect():
+    cred = credentials.Certificate("./firebasekeys.json")
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
+    })
+    return
+
+def JSONToFire(JSONfile, DataBaseRef):
+    with open(JSONfile, 'r') as f:
+        file_contents = json.load(f)
+
+    ref = db.reference(DataBaseRef)
+    ref.set(file_contents)
+    return
+
 def readImage(filename):
     img = Image.open(filename)
 
@@ -134,15 +140,20 @@ def rollToJSON(rentRoll):
 
     x = rentRoll.retMasterDict()
 
-    with open('out.json', 'w', encoding='utf-8') as f:
+    #To out.json:
+    filename = 'out.json'
+    with open(filename, 'w', encoding='utf-8') as f:
         json.dump(x, f, ensure_ascii=False, indent=4)
 
-    return #return json file for general purpose later
+    return filename
 
 def main():
     #readImage('1650 lease rent roll.png')
     gotRoll = readPDFTemplate1('2018-05-16 - Tamarack - Base Rent Roll.pdf')
-    rollToJSON(gotRoll)
+    jsonRolls = rollToJSON(gotRoll)
+
+    firebaseConnect()
+    JSONToFire(jsonRolls, 'Test12')
 
 if __name__ == "__main__":
     main()
