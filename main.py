@@ -83,6 +83,7 @@ def JSONToFire(JSONfile, DataBaseRef):
     ref = db.reference(DataBaseRef)
     ref.set(file_contents)
     return
+#Firebase END
 
 def readImage(filename):
     img = Image.open(filename)
