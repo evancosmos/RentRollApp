@@ -1,0 +1,92 @@
+{
+    "0": {
+        "Lease": "TCC10001",
+        "Operating Name": "Boston Pizza",
+        "Square Feet": "6,062",
+        "Status": "Current",
+        "Renewal Option": "2 @ 7 years per Lse",
+        "Lease Expires": "2023-Dec-31",
+        "Renewal Notice": "N/A",
+        "Origination Com": "2009-Jul-31"
+    },
+    "1": {
+        "Lease": "TCC10101",
+        "Operating Name": "Tim Hortons (Store #103655)",
+        "Square Feet": "2,383",
+        "Status": "Current",
+        "Renewal Option": "Renewal Notice Date:",
+        "Lease Expires": "2024-Aug-31",
+        "Renewal Notice": "Orig .Commencement:",
+        "Origination Com": "Base Rent (Yr 1 - 5)"
+    },
+    "2": {
+        "Lease": "TCC10201",
+        "Operating Name": "Staples",
+        "Square Feet": "20,000",
+        "Status": "Current",
+        "Renewal Option": "3 @ 5 years - S13.01",
+        "Lease Expires": "2019-Sep-30",
+        "Renewal Notice": "2019-Jan-01",
+        "Origination Com": "2004-Jul-01"
+    },
+    "3": {
+        "Lease": "TCC10301",
+        "Operating Name": "Fabricland",
+        "Square Feet": "9,123",
+        "Status": "Current",
+        "Renewal Option": "None",
+        "Lease Expires": "2020-Feb-29",
+        "Renewal Notice": "N/A",
+        "Origination Com": "2005-Mar-01"
+    },
+    "4": {
+        "Lease": "TCC10401",
+        "Operating Name": "Bulk Barn",
+        "Square Feet": "5,982",
+        "Status": "Current",
+        "Renewal Option": "Renewal Notice Date:",
+        "Lease Expires": "N/A",
+        "Renewal Notice": "Orig .Commencement:",
+        "Origination Com": "2012-Aug-30"
+    },
+    "5": {
+        "Lease": "TCC10501",
+        "Operating Name": "Winners",
+        "Square Feet": "23,679",
+        "Status": "Current",
+        "Renewal Option": "3 @ 5 years",
+        "Lease Expires": "2024-Jan-31",
+        "Renewal Notice": "Renewal Notice Date:",
+        "Origination Com": "Orig .Commencement:"
+    },
+    "6": {
+        "Lease": "TCC10601",
+        "Operating Name": "Warehouse One #53",
+        "Square Feet": "3,210",
+        "Status": "Current",
+        "Renewal Option": "None",
+        "Lease Expires": "2019-May-31",
+        "Renewal Notice": "N/A",
+        "Origination Com": "2009-Jun-01"
+    },
+    "7": {
+        "Lease": "TCC10801",
+        "Operating Name": "Ardene",
+        "Square Feet": "6,347",
+        "Status": "Current",
+        "Renewal Option": "1 @ 5 years",
+        "Lease Expires": "2024-May-31",
+        "Renewal Notice": "N/A",
+        "Origination Com": "2006-Nov-01"
+    },
+    "8": {
+        "Lease": "TCC11001",
+        "Operating Name": "Telus",
+        "Square Feet": "1,320",
+        "Status": "Current",
+        "Renewal Option": "None",
+        "Lease Expires": "2021-Aug-31",
+        "Renewal Notice": "N/A",
+        "Origination Com": "2006-Sep-01"
+    }
+}
