@@ -3,6 +3,7 @@ from pdfminer.high_level import extract_text
 #Read text from images https://www.geeksforgeeks.org/how-to-extract-text-from-images-with-python/
 from PIL import Image
 from pytesseract import pytesseract #Requires the tesseract executable on the system.
+#https://linuxhint.com/install-tesseract-ocr-linux/
 
 #TODO: Fix duplicated print, implment ODR
 
