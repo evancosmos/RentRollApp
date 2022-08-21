@@ -1,4 +1,5 @@
 #Read text from PDFs
+from crypt import methods
 from pdfminer.high_level import extract_text
 
 #Output to site/database with json
@@ -15,17 +16,8 @@ from firebase_admin import db
 
 #Web App framework for python
 from flask import Flask, request
-
-#FLASK START
-""" app = Flask(__name__)
-    
-@app.route("/", methods=['GET', 'POST'])
-def helloworld():
-    if request.method == 'POST':
-        f = request.files['the_file'] #Get the file, send it to database
-
-    return "<p>Hello World<p> <button>Upload</button> <button>Upload</button>" """
-#FLASK END
+import flask
+from flask_cors import CORS
 
 #TODO: Train ODR, Set up database connections, Set up frontend connections.
 
@@ -39,6 +31,7 @@ class rentRollEntity: #Individual Items on a Rent Roll
         self.leaseExpire = ""
         self.renNotice = ""
         self.origCom = ""
+        self.baseRentLines = ""
 
     def retAsDict(self):
         newDict = {
@@ -67,6 +60,26 @@ class rentRoll: #The collection of items on a rent roll
             newMasterDict[str(id)] = roll.retAsDict()
             id += 1
         return newMasterDict
+
+#Flask START
+def flaskConnect():
+    app = Flask(__name__)
+    CORS(app)
+        
+    @app.route("/")
+    def helloworld():
+        return "Hello World!"
+
+    @app.route("/users", methods=["GET"])
+    def users():
+        print("users endpoint reached...")
+        with open("out.json", "r") as f:
+            data = json.load(f)
+        return flask.jsonify(data)
+
+    app.run()
+    return
+#Flask END
 
 #Firebase START
 def firebaseConnect():
@@ -104,7 +117,7 @@ def readPDFTemplate1(filename): #For this template, a new item is begins when an
         #print(line)
         if(line == ''):
             itemCount = itemCount - 1
-        elif(line[0:3] == "TCC"): #A new item is made
+        elif(line[:3] == "TCC"): #A new item is made.
             newRoll = rentRollEntity()
             newRoll.leaseNum = line
         elif(itemCount == 1):
@@ -150,6 +163,7 @@ def rollToJSON(rentRoll):
 
 def main():
     #readImage('1650 lease rent roll.png')
+    flaskConnect()
     gotRoll = readPDFTemplate1('2018-05-16 - Tamarack - Base Rent Roll.pdf')
     jsonRolls = rollToJSON(gotRoll)
 
