@@ -5,10 +5,6 @@ from pdfminer.high_level import extract_text
 #Output to site/database with json
 import json
 
-#Read text from images https://www.geeksforgeeks.org/how-to-extract-text-from-images-with-python/
-from PIL import Image
-from pytesseract import pytesseract #Requires the tesseract executable on the system. https://linuxhint.com/install-tesseract-ocr-linux/
-
 #Hosting Service
 import firebase_admin
 from firebase_admin import credentials
@@ -19,7 +15,7 @@ from flask import Flask, request
 import flask
 from flask_cors import CORS
 
-#TODO: Train ODR, Set up database connections, Set up frontend connections.
+#TODO: Train ODR, Fix data collection fron PDF Template 1
 
 class rentRollEntity: #Individual Items on a Rent Roll
     def __init__(self):
@@ -79,7 +75,6 @@ def flaskConnect():
 
     app.run()
     return
-#Flask END
 
 #Firebase START
 def firebaseConnect():
@@ -96,16 +91,6 @@ def JSONToFire(JSONfile, DataBaseRef):
     ref = db.reference(DataBaseRef)
     ref.set(file_contents)
     return
-#Firebase END
-
-def readImage(filename):
-    img = Image.open(filename)
-
-    text = pytesseract.image_to_string(img)
-
-    print(text)
-    allRoll = rentRoll()
-    return allRoll
 
 def readPDFTemplate1(filename): #For this template, a new item is begins when an line starts with "TCC"
     text = extract_text(filename)
