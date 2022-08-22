@@ -1,6 +1,7 @@
 #Read text from PDFs
 from crypt import methods
 from pdfminer.high_level import extract_text
+from pdfminer.layout import LAParams
 
 #Output to site/database with json
 import json
@@ -94,7 +95,9 @@ def JSONToFire(JSONfile, DataBaseRef):
     return
 
 def readPDFTemplate1(filename): #For this template, a new item is begins when an line starts with "TCC"
-    text = extract_text(filename)
+    LAPParms = LAParams(0.5, 2, 0.2, 0.1, 0.5, False, False)
+
+    text = extract_text(filename, None, None, 0, True, "utf-8", LAPParms)
     textLines = text.splitlines()
     #Once "TCC" is read from the start of a line, make a new roll
     allRoll = rentRoll()
@@ -102,8 +105,8 @@ def readPDFTemplate1(filename): #For this template, a new item is begins when an
     brCount = 0
     brLineItem = ""
     loopedOnce = False
-    for line in textLines[:500]: #Remember to remove the :500 limiter after testing
-        #print(line)
+    for line in textLines[:200]: #Remember to remove the :500 limiter after testing
+        print(line)
         if(line == ''):
             itemCount = itemCount - 1
         elif(line[:3] == "TCC"): #A new item is made.
@@ -140,10 +143,12 @@ def readPDFTemplate1(filename): #For this template, a new item is begins when an
         elif((line[:9] == "Base Rent") and (loopedOnce)):
             brLineItem += line
             brCount = 1
+            itemCount = -1
         elif(brCount > 0):
             brLineItem = brLineItem + line
             brCount += 1
-            if(brCount > 3):
+            itemCount = -1
+            if(brCount > 2):
                 brLineItem += "\n"
                 brCount = 0
         else:
@@ -170,8 +175,8 @@ def main():
     gotRoll = readPDFTemplate1('2018-05-16 - Tamarack - Base Rent Roll.pdf')
     jsonRolls = rollToJSON(gotRoll)
 
-    firebaseConnect()
-    JSONToFire(jsonRolls, 'Test12')
+    #firebaseConnect()
+    #JSONToFire(jsonRolls, 'Test12')
 
 if __name__ == "__main__":
     main()
