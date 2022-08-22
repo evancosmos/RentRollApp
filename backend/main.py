@@ -16,7 +16,7 @@ from flask import Flask, request
 import flask
 from flask_cors import CORS
 
-#TODO: Train ODR, Fix data collection (vertical being read before horizontal) for PDF Template 1
+#TODO: Optimize ODR reading, Fix data collection for Base Rent portion of PDF template 1.
 
 class rentRollEntity: #Individual Items on a Rent Roll
     def __init__(self):
