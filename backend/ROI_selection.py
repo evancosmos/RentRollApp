@@ -1,32 +1,7 @@
-#Read text from images https://www.geeksforgeeks.org/how-to-extract-text-from-images-with-python/
-from PIL import Image
-from pytesseract import pytesseract #Requires the tesseract executable on the system. https://linuxhint.com/install-tesseract-ocr-linux/
-
+import sys
+import math
 import cv2 as cv
-import numpy
-
-#Credit to https://github.com/fazlurnu/Text-Extraction-Table-Image
-def readImage(filename):
-    img = cv.imread(cv.samples.findFile(filename))
-    cImage = numpy.copy(img) #image to draw 
-    #cv.imshow("image", img) #name the window as "image"
-    #cv.waitKey(0)
-    #cv.destroyWindow("image") #close the window
-
-    img = toGreyScale(img)
-    hor, vert = detect_lines(img)
-
-    text = pytesseract.image_to_string(img)
-    print(text)
-    return 
-
-def toGreyScale(img):
-    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-    canny = cv.Canny(gray, 50, 150)
-    cv.imshow("canny", canny)
-    cv.waitKey(0)
-    cv.destroyWindow("canny")
-    return canny
+import numpy as np
 
 def is_vertical(line):
     return line[0]==line[2]
@@ -50,13 +25,21 @@ def overlapping_filter(lines, sorting_index):
                 
     return filtered_lines
                
-def detect_lines(image, title='default', rho = 1, theta = numpy.pi/180, threshold = 50, minLinLength = 290, maxLineGap = 6, display = False, write = False):
+def detect_lines(image, title='default', rho = 1, theta = np.pi/180, threshold = 50, minLinLength = 290, maxLineGap = 6, display = False, write = False):
+    # Check if image is loaded fine
+    gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+    
+    if gray is None:
+        print ('Error opening image!')
+        return -1
+    
+    dst = cv.Canny(gray, 50, 150, None, 3)
     
     # Copy edges to the images that will display the results in BGR
-    cImage = numpy.copy(image)
+    cImage = np.copy(image)
     
     #linesP = cv.HoughLinesP(dst, 1 , np.pi / 180, 50, None, 290, 6)
-    linesP = cv.HoughLinesP(image, rho , theta, threshold, None, minLinLength, maxLineGap)
+    linesP = cv.HoughLinesP(dst, rho , theta, threshold, None, minLinLength, maxLineGap)
     
     horizontal_lines = []
     vertical_lines = []
@@ -74,8 +57,7 @@ def detect_lines(image, title='default', rho = 1, theta = numpy.pi/180, threshol
         
         horizontal_lines = overlapping_filter(horizontal_lines, 1)
         vertical_lines = overlapping_filter(vertical_lines, 0)
-    
-    display = False
+            
     if (display):
         for i, line in enumerate(horizontal_lines):
             cv.line(cImage, (line[0], line[1]), (line[2], line[3]), (0,255,0), 3, cv.LINE_AA)
@@ -89,10 +71,40 @@ def detect_lines(image, title='default', rho = 1, theta = numpy.pi/180, threshol
                        0.5, (0, 0, 0), 1, cv.LINE_AA) 
             
         cv.imshow("Source", cImage)
+        #cv.imshow("Canny", cdstP)
         cv.waitKey(0)
         cv.destroyAllWindows()
         
     return (horizontal_lines, vertical_lines)
 
+def get_cropped_image(image, x, y, w, h):
+    cropped_image = image[ y:y+h , x:x+w ]
+    return cropped_image
+    
+def get_ROI(image, horizontal, vertical, left_line_index, right_line_index, top_line_index, bottom_line_index, offset=4):
+    x1 = vertical[left_line_index][2] + offset
+    y1 = horizontal[top_line_index][3] + offset
+    x2 = vertical[right_line_index][2] - offset
+    y2 = horizontal[bottom_line_index][3] - offset
+    
+    w = x2 - x1
+    h = y2 - y1
+    
+    cropped_image = get_cropped_image(image, x1, y1, w, h)
+    
+    return cropped_image, (x1, y1, w, h)
+
+def main(argv):
+    
+    default_file = '../Images/source6.png'
+    filename = argv[0] if len(argv) > 0 else default_file
+    
+    src = cv.imread(cv.samples.findFile(filename))
+    
+    # Loads an image
+    horizontal, vertical = detect_lines(src, display=True)
+    
+    return 0
+    
 if __name__ == "__main__":
-    readImage("1650 lease rent roll.png")
+    main(sys.argv[1:])
