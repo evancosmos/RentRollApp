@@ -15,7 +15,7 @@ from flask import Flask, request
 import flask
 from flask_cors import CORS
 
-#TODO: Train ODR, Fix data collection fron PDF Template 1
+#TODO: Train ODR, Fix data collection (vertical being read before horizontal) for PDF Template 1
 
 class rentRollEntity: #Individual Items on a Rent Roll
     def __init__(self):
@@ -38,7 +38,8 @@ class rentRollEntity: #Individual Items on a Rent Roll
             "Renewal Option": self.renOption,
             "Lease Expires": self.leaseExpire,
             "Renewal Notice": self.renNotice,
-            "Origination Com": self.origCom
+            "Origination Com": self.origCom,
+            "Rent Info": self.baseRentLines
         }
         return newDict
 
@@ -98,11 +99,18 @@ def readPDFTemplate1(filename): #For this template, a new item is begins when an
     #Once "TCC" is read from the start of a line, make a new roll
     allRoll = rentRoll()
     itemCount = 0
+    brCount = 0
+    brLineItem = ""
+    loopedOnce = False
     for line in textLines[:500]: #Remember to remove the :500 limiter after testing
         #print(line)
         if(line == ''):
             itemCount = itemCount - 1
         elif(line[:3] == "TCC"): #A new item is made.
+            if(loopedOnce):
+                newRoll.baseRentLines = brLineItem
+                brLineItem = ""
+                allRoll.addRoll(newRoll)
             newRoll = rentRollEntity()
             newRoll.leaseNum = line
         elif(itemCount == 1):
@@ -127,12 +135,22 @@ def readPDFTemplate1(filename): #For this template, a new item is begins when an
             pass
         elif(itemCount == 11):
             newRoll.origCom = line
-            allRoll.addRoll(newRoll)
+            loopedOnce = True
             itemCount = -1
+        elif((line[:9] == "Base Rent") and (loopedOnce)):
+            brLineItem += line
+            brCount = 1
+        elif(brCount > 0):
+            brLineItem = brLineItem + line
+            brCount += 1
+            if(brCount > 3):
+                brLineItem += "\n"
+                brCount = 0
         else:
             itemCount = itemCount - 1
         itemCount += 1
 
+    allRoll.addRoll(newRoll)
     return allRoll
 
 def rollToJSON(rentRoll):
@@ -148,7 +166,7 @@ def rollToJSON(rentRoll):
 
 def main():
     #readImage('1650 lease rent roll.png')
-    flaskConnect()
+    #flaskConnect()
     gotRoll = readPDFTemplate1('2018-05-16 - Tamarack - Base Rent Roll.pdf')
     jsonRolls = rollToJSON(gotRoll)
 
