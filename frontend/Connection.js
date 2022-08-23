@@ -3,14 +3,6 @@
 
 var xhr = null;
 
-getXmlHttpRequestObject = function () {
-    if (!xhr) {
-        // Create a new XMLHttpRequest object 
-        xhr = new XMLHttpRequest();
-    }
-    return xhr;
-};
-
 function dataCallback() {
     // Check response is ready or not
     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -33,7 +25,7 @@ function sendDataCallback() {
 
 function getUsers() {
     console.log("Get users...");
-    xhr = getXmlHttpRequestObject();
+    xhr = new XMLHttpRequest();
     xhr.onreadystatechange = dataCallback;
     // asynchronous requests
     xhr.open("GET", "http://localhost:5000/users", true);
@@ -46,13 +38,15 @@ function sendData(form) {
 
     responseOut = document.getElementById('displayRoll');
 
-    xhr = getXmlHttpRequestObject();
+    xhr = new XMLHttpRequest()
     xhr.onreadystatechange = sendDataCallback;
     // asynchronous requests
     xhr.open("POST", "http://localhost:5000/fileSend", true); //http://localhost:5000/
     //xhr.setRequestHeader("Content-Type", "multipart/form-data");
 
     // Send the request over the network
+    dataDiv = document.getElementById('displayRoll');
+    dataDiv.innerHTML = "Reading the file...";
+    
     xhr.send(formData);
-    getUsers();
 }

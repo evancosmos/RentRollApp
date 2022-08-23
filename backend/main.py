@@ -93,8 +93,8 @@ def flaskConnect():
             print("Got request in static files") 
             print(request.files['static_file'])
             f = request.files['static_file']
-            f.save("tempfile" + f.filename[-4:])
-            readPDFCrestWell("tempfile" + f.filename[-4:])
+            f.save(UPLOAD_FOLDER + "tempfile" + f.filename[-4:])
+            readPDFCrestWell(UPLOAD_FOLDER + "tempfile" + f.filename[-4:])
             resp = {"success": True, "response": "file saved!"}
             return flask.jsonify(resp)
         resp = {"success": True, "response": "Non-post"}
@@ -121,7 +121,6 @@ def JSONToFire(JSONfile, DataBaseRef):
 
 def readPDFCrestWell(filename): #For this template, a new item is begins when an line starts with "TCC"
     #For this template, I have to iterate twice to get pdfminersix to read Base rent correctly. See difference in LAPParms
-    filename = "TestRolls/" + filename
     LAPParmsBR = LAParams(0.5, 2, 0.2, 0.1, None, False, False)
     textBR = extract_text(filename, None, None, 0, True, "utf-8", LAPParmsBR)
     textLinesBR = textBR.splitlines()
@@ -131,7 +130,7 @@ def readPDFCrestWell(filename): #For this template, a new item is begins when an
     brLineItem = ""
     brCount = 0
     oldLeaseNum = ""
-    validCodes = ["TCC", "SPA", "WBC"]
+    validCodes = ["TCC", "SPA", "WBC", "SPR"]
 
     for line in textLinesBR:
         #print(line)

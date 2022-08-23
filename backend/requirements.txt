@@ -62,6 +62,7 @@ olefile==0.46
 opencv-python==4.6.0.66
 packaging==21.3
 paramiko==2.6.0
+pbr==5.10.0
 pdfminer.six==20220524
 pexpect==4.6.0
 Pillow==9.2.0
@@ -94,6 +95,7 @@ SecretStorage==2.3.1
 simplejson==3.16.0
 six==1.14.0
 systemd-python==234
+testresources==2.0.1
 ubuntu-advantage-tools==27.9
 ubuntu-drivers-common==0.0.0
 ufw==0.36
