@@ -68,6 +68,7 @@ def flaskConnect():
     ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
     app = Flask(__name__)
+    app.secret_key = "password"
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     CORS(app)
     
@@ -104,7 +105,10 @@ def flaskConnect():
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 readPDFCrestWell(filename)
                 return redirect(url_for('download_file', name=filename))
-        return
+        return_data = {
+            "status": "Fail"
+        }
+        return flask.Response(response=json.dumps(return_data), status=201)
         
     app.run()
     return
