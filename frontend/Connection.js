@@ -13,7 +13,7 @@ function dataCallback() {
     // Check response is ready or not
     if (xhr.readyState == 4 && xhr.status == 200) {
         console.log("User data received!");
-        dataDiv = document.getElementById('result-container');
+        dataDiv = document.getElementById('displayRoll');
         // Set current data text
         dataDiv.innerHTML = xhr.responseText;
     }
@@ -34,7 +34,7 @@ function getUsers() {
     xhr = getXmlHttpRequestObject();
     xhr.onreadystatechange = dataCallback;
     // asynchronous requests
-    xhr.open("GET", "http://localhost:5000/users", true);
+    xhr.open("GET", "http://localhost:5500/users", true);
     // Send the request over the network
     xhr.send(null);
 }

@@ -12,9 +12,11 @@ from firebase_admin import credentials
 from firebase_admin import db
 
 #Web App framework for python
-from flask import Flask, request
+import os
+from flask import Flask, request, flash, redirect, url_for
 import flask
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 
 #TODO: Optimize ODR reading, Generalize the starting 3 chars for Template 1 reading. 
 
@@ -60,10 +62,19 @@ class rentRoll: #The collection of items on a rent roll
         return newMasterDict
 
 #Flask START
+
 def flaskConnect():
+    UPLOAD_FOLDER = '/TestRolls'
+    ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
+
     app = Flask(__name__)
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     CORS(app)
-        
+    
+    def allowed_file(filename):
+        return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
     @app.route("/")
     def helloworld():
         return "Hello World!"
@@ -75,13 +86,26 @@ def flaskConnect():
             data = json.load(f)
         return flask.jsonify(data)
 
-    @app.route("", methods=["POST"])
-    def parseFile():
-        return_data = {
-            "status": "success"
-        }
-        return return_data
-    
+    @app.route('/fileSend', methods=['GET', 'POST'])
+    def upload_file():
+        if request.method == 'POST':
+            # check if the post request has the file part
+            if 'file' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            file = request.files['file']
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                readPDFCrestWell(filename)
+                return redirect(url_for('download_file', name=filename))
+        return
+        
     app.run()
     return
 
@@ -185,6 +209,7 @@ def readPDFCrestWell(filename): #For this template, a new item is begins when an
         itemCount += 1
 
     allRoll.addRoll(newRoll)
+    rollToJSON(allRoll)
     return allRoll
 
 def rollToJSON(rentRoll):
@@ -200,9 +225,9 @@ def rollToJSON(rentRoll):
 
 def main():
     #readImage('1650 lease rent roll.png')
-    #flaskConnect()
-    gotRoll = readPDFCrestWell('2018-05-16 - Spall - Base Rent Roll.pdf')
-    jsonRolls = rollToJSON(gotRoll)
+    flaskConnect()
+    #gotRoll = readPDFCrestWell('2018-05-16 - Spall - Base Rent Roll.pdf')
+    #jsonRolls = rollToJSON(gotRoll)
 
     #firebaseConnect()
     #JSONToFire(jsonRolls, 'Test12')
