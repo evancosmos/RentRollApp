@@ -8,7 +8,7 @@
         "Lease Expires": "2023-Dec-31",
         "Renewal Notice": "N/A",
         "Origination Com": "2009-Jul-31",
-        "Rent Info": "Base Rent (Yr 1 - 7)Base Rent (Yr 8 - 14)2009-Dec-072016-Dec-31\n"
+        "Rent Info": "Base Rent (Yr 1 - 7) 2009-Dec-07 2016-Dec-31 $24.00\nBase Rent (Yr 8 - 14) 2017-Jan-01 2023-Dec-31 $25.00\n"
     },
     "1": {
         "Lease": "TCC10101",
@@ -19,7 +19,7 @@
         "Lease Expires": "2025-Jan-28",
         "Renewal Notice": "2024-Aug-31",
         "Origination Com": "2010-Jan-29",
-        "Rent Info": "Base Rent (Yr 1 - 5)Base Rent (Yr 6 - 10)Base Rent (Yr 11 - 15)Base Rent (Yr 16 - 20)2010-Jan-292015-Jan-31\n"
+        "Rent Info": "Base Rent (Yr 1 - 5) 2010-Jan-29 2015-Jan-31 $35.37\nBase Rent (Yr 6 - 10) 2015-Feb-01 2020-Jan-31 $37.45\nBase Rent (Yr 11 - 15) 2020-Feb-01 2025-Jan-28 $39.53\nBase Rent (Yr 16 - 20) 2025-Feb-01 2030-Jan-31 $41.61\n"
     },
     "2": {
         "Lease": "TCC10201",
@@ -30,7 +30,7 @@
         "Lease Expires": "2019-Sep-30",
         "Renewal Notice": "2019-Jan-01",
         "Origination Com": "2004-Jul-01",
-        "Rent Info": "Base Rent (Yr 1 - 5)Base Rent (Yr 6 - 10)2004-Sep-152009-Sep-30\nBase Rent (Yr 11 - 15)2014-Oct-012019-Sep-30\n"
+        "Rent Info": "Base Rent (Yr 1 - 5) 2004-Sep-15 2009-Sep-30 $7.00\nBase Rent (Yr 6 - 10) 2009-Oct-01 2014-Sep-30 $8.00\nBase Rent (Yr 11 - 15) 2014-Oct-01 2019-Sep-30 $9.00\n"
     },
     "3": {
         "Lease": "TCC10301",
@@ -41,6 +41,17 @@
         "Lease Expires": "2020-Feb-29",
         "Renewal Notice": "N/A",
         "Origination Com": "2005-Mar-01",
-        "Rent Info": ""
+        "Rent Info": "Base Rent (Yr 1 - 5)"
+    },
+    "4": {
+        "Lease": "TCC10301",
+        "Operating Name": "Fabricland",
+        "Square Feet": "9,123",
+        "Status": "Current",
+        "Renewal Option": "None",
+        "Lease Expires": "2020-Feb-29",
+        "Renewal Notice": "N/A",
+        "Origination Com": "2005-Mar-01",
+        "Rent Info": "Base Rent (Yr 1 - 5)"
     }
 }

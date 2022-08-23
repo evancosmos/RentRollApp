@@ -95,25 +95,50 @@ def JSONToFire(JSONfile, DataBaseRef):
     return
 
 def readPDFTemplate1(filename): #For this template, a new item is begins when an line starts with "TCC"
-    LAPParms = LAParams(0.5, 2, 0.2, 0.1, 0.5, False, False)
+    #For this template, I have to iterate twice to get pdfminersix to read Base rent correctly. See difference in LAPParms
+    LAPParmsBR = LAParams(0.5, 2, 0.2, 0.1, None, False, False)
+    textBR = extract_text(filename, None, None, 0, True, "utf-8", LAPParmsBR)
+    textLinesBR = textBR.splitlines()
 
+    loopedOnce = False
+    BaseRentDict = {}
+    brLineItem = ""
+    brCount = 0
+    oldLeaseNum = ""
+    for line in textLinesBR[:200]:
+        print(line)
+        if(line == ''):
+            pass
+        elif(line[:3] == "TCC"):
+            if(loopedOnce):
+                BaseRentDict[oldLeaseNum] = brLineItem
+                brLineItem = ""
+            oldLeaseNum = line
+            loopedOnce = True
+        elif((line[:9] == "Base Rent") and (loopedOnce)):
+            brLineItem += line
+            brCount = 1
+        elif(brCount > 0):
+            brLineItem = brLineItem + " " + line
+            brCount += 1
+            if(brCount > 3):
+                brLineItem += "\n"
+                brCount = 0
+    BaseRentDict[oldLeaseNum] = brLineItem
+
+    LAPParms = LAParams(0.5, 2, 0.2, 0.1, 0.5, False, False)
     text = extract_text(filename, None, None, 0, True, "utf-8", LAPParms)
     textLines = text.splitlines()
     #Once "TCC" is read from the start of a line, make a new roll
     allRoll = rentRoll()
     itemCount = 0
     brCount = 0
-    brLineItem = ""
-    loopedOnce = False
+
     for line in textLines[:200]: #Remember to remove the :500 limiter after testing
-        print(line)
+        #print(line)
         if(line == ''):
             itemCount = itemCount - 1
         elif(line[:3] == "TCC"): #A new item is made.
-            if(loopedOnce):
-                newRoll.baseRentLines = brLineItem
-                brLineItem = ""
-                allRoll.addRoll(newRoll)
             newRoll = rentRollEntity()
             newRoll.leaseNum = line
         elif(itemCount == 1):
@@ -138,19 +163,12 @@ def readPDFTemplate1(filename): #For this template, a new item is begins when an
             pass
         elif(itemCount == 11):
             newRoll.origCom = line
-            loopedOnce = True
             itemCount = -1
-        elif((line[:9] == "Base Rent") and (loopedOnce)):
-            brLineItem += line
-            brCount = 1
-            itemCount = -1
-        elif(brCount > 0):
-            brLineItem = brLineItem + line
-            brCount += 1
-            itemCount = -1
-            if(brCount > 2):
-                brLineItem += "\n"
-                brCount = 0
+            try:
+                newRoll.baseRentLines = BaseRentDict[newRoll.leaseNum]
+            except:
+                newRoll.baseRentLines = "Missing Base Rent Data"
+            allRoll.addRoll(newRoll)
         else:
             itemCount = itemCount - 1
         itemCount += 1
