@@ -1,5 +1,2 @@
-__pycache__/main.cpython-38.pyc
 firebasekeys.json
-backend/__pycache__/main.cpython-38.pyc
-backend/__pycache__/ROI_selection.cpython-38.pyc
-backend/__pycache__/preprocessing.cpython-38.pyc
+backend/__pycache__
