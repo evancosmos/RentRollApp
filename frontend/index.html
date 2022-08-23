@@ -7,13 +7,14 @@
     <script src="Connection.js"></script>
 
     <body>
-        <label for="myfile">Upload a rent roll</label>
-        <input type="file" id="myfile" name="myfile">
-        <button onclick="sendData()">Submit File</button>
+        <div>Choose a rent roll to read</div>
+        <form enctype = "multipart/form-data" onsubmit="return false;" >
+            <input id="file" type="file" name="static_file" />
+            <button id="upload-button" onclick="sendData(this.form)"> Upload </button>
+        </form>
 
-        <textarea id="displayRoll" rows="30" cols="200">This is where rent roll information will be displayed</textarea>
+        <textarea id="displayRoll" rows="30" cols="200">This is where parsed rent roll information will be displayed</textarea>
 
-        <button onclick="getUsers()">Display Parsed Data</button>
     </body>
 
 </html>

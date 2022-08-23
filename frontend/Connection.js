@@ -1,4 +1,6 @@
 //https://tms-dev-blog.com/python-backend-with-javascript-frontend-how-to/
+//https://python.plainenglish.io/how-to-send-a-file-using-javascript-and-python-5038dc39707b
+
 var xhr = null;
 
 getXmlHttpRequestObject = function () {
@@ -39,18 +41,18 @@ function getUsers() {
     xhr.send(null);
 }
 
-function sendData() {
-    dataToSend = document.getElementById('myfile').value;
-    if (!dataToSend) {
-        console.log("Data is empty.");
-        return;
-    }
-    console.log("Sending data: " + dataToSend);
+function sendData(form) {
+    var formData = new FormData(form);
+
+    responseOut = document.getElementById('displayRoll');
+
     xhr = getXmlHttpRequestObject();
     xhr.onreadystatechange = sendDataCallback;
     // asynchronous requests
-    xhr.open("POST", "http://localhost:5000/fileSend", true);
-    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+    xhr.open("POST", "http://localhost:5000/fileSend", true); //http://localhost:5000/
+    //xhr.setRequestHeader("Content-Type", "multipart/form-data");
+
     // Send the request over the network
-    xhr.send(dataToSend);
+    xhr.send(formData);
+    getUsers();
 }

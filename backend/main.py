@@ -18,7 +18,7 @@ import flask
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-#TODO: Optimize ODR reading, Generalize the starting 3 chars for Template 1 reading. 
+#TODO: Optimize ODR reading, Generalize the starting 3 chars for Template 1 reading, Get Hosting Fully online, Add user accounts, Connect database to processes. 
 
 class rentRollEntity: #Individual Items on a Rent Roll
     def __init__(self):
@@ -64,7 +64,7 @@ class rentRoll: #The collection of items on a rent roll
 #Flask START
 
 def flaskConnect():
-    UPLOAD_FOLDER = '/TestRolls'
+    UPLOAD_FOLDER = '/home/wolf/Documents/RentRollApp/backend/'
     ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
     app = Flask(__name__)
@@ -89,26 +89,16 @@ def flaskConnect():
 
     @app.route('/fileSend', methods=['GET', 'POST'])
     def upload_file():
-        if request.method == 'POST':
-            # check if the post request has the file part
-            if 'file' not in request.files:
-                flash('No file part')
-                return redirect(request.url)
-            file = request.files['file']
-            # If the user does not select a file, the browser submits an
-            # empty file without a filename.
-            if file.filename == '':
-                flash('No selected file')
-                return redirect(request.url)
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                readPDFCrestWell(filename)
-                return redirect(url_for('download_file', name=filename))
-        return_data = {
-            "status": "Fail"
-        }
-        return flask.Response(response=json.dumps(return_data), status=201)
+        if(request.method == "POST"):
+            print("Got request in static files") 
+            print(request.files['static_file'])
+            f = request.files['static_file']
+            f.save("tempfile" + f.filename[-4:])
+            readPDFCrestWell("tempfile" + f.filename[-4:])
+            resp = {"success": True, "response": "file saved!"}
+            return flask.jsonify(resp)
+        resp = {"success": True, "response": "Non-post"}
+        return flask.jsonify(resp)
         
     app.run()
     return
