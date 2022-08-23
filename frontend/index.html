@@ -1,48 +1,19 @@
 <html>
-    <header>Test Page</header> 
+    <header>
+        <h1>Test Page for Rent Roll Web App<h1>
+        <link rel="stylesheet" href=""/>
+    </header> 
+
+    <script src="Connection.js"></script>
 
     <body>
-        <button onclick="getUsers()">Call outjson on backend</button>
-        <div id="result-container">data will be here</div>
+        <label for="myfile">Upload a rent roll</label>
+        <input type="file" id="myfile" name="myfile">
+        <button onclick="sendData()">Submit File</button>
+
+        <textarea id="displayRoll" rows="30" cols="200">This is where rent roll information will be displayed</textarea>
+
+        <button onclick="getUsers()">Display Parsed Data</button>
     </body>
 
-    <script>
-        //https://tms-dev-blog.com/python-backend-with-javascript-frontend-how-to/
-        var xhr = null;
-        getXmlHttpRequestObject = function () {
-            if (!xhr) {
-                // Create a new XMLHttpRequest object 
-                xhr = new XMLHttpRequest();
-            }
-            return xhr;
-        };
-        function dataCallback() {
-            // Check response is ready or not
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                console.log("User data received!");
-                dataDiv = document.getElementById('result-container');
-                // Set current data text
-                dataDiv.innerHTML = xhr.responseText;
-            }
-        }
-        function sendDataCallback() {
-        // Check response is ready or not
-            if (xhr.readyState == 4 && xhr.status == 201) {
-                console.log("Data creation response received!");
-                dataDiv = document.getElementById('sent-data-container');
-                // Set current data text
-                dataDiv.innerHTML = xhr.responseText;
-            }
-        }
-        function getUsers() {
-            console.log("Get users...");
-            xhr = getXmlHttpRequestObject();
-            xhr.onreadystatechange = dataCallback;
-            // asynchronous requests
-            xhr.open("GET", "http://localhost:5000/users", true);
-            // Send the request over the network
-            xhr.send(null);
-        }
-        
-    </script>
 </html>

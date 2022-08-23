@@ -2,17 +2,17 @@
 
 import json
 
-from preprocessing import get_grayscale, get_binary, invert_area, draw_text, detect
+from preprocessing import get_grayscale, get_binary, draw_text, detect
 from ROI_selection import detect_lines, get_ROI
 import cv2 as cv
 
-def main(filename, display = False, print_text = False, write = False):
+def OCR(filename, display = False, print_text = False, write = False):
     
     src = cv.imread(cv.samples.findFile(filename))
     
     horizontal, vertical = detect_lines(src, minLinLength=350, display=False, write = True)
     
-    ## invert area
+    ## invert area (all 0 for no inverted area)
     left_line_index = 0
     right_line_index = 0
     top_line_index = 0
@@ -25,8 +25,6 @@ def main(filename, display = False, print_text = False, write = False):
     bw = get_binary(gray)
     #cv.imshow("bw", bw)
     #bw = erode(bw, kernel_size=2)
-    
-    cv.waitKey(0)
     
     ## set keywords
     keywords = ['Tenant Name', 'Unit #', 'Area Rented', 'Lease Term', 'Rental Fee', 'Monthly Base Rent', 'Commencement Date',
@@ -83,7 +81,7 @@ def main(filename, display = False, print_text = False, write = False):
                 cv.waitKey(0)
                 cv.destroyAllWindows()
 
-            if (False):
+            if (write):
                 cv.imwrite("../Images/"+ str(counter) + ".png", image_with_text);
             
     filename = 'OCRout.json'
@@ -93,4 +91,4 @@ def main(filename, display = False, print_text = False, write = False):
     return 0
     
 if __name__ == "__main__":
-    main("1650 lease rent roll.png")
+    OCR("1650 lease rent roll.png")

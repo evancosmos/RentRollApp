@@ -16,7 +16,7 @@ from flask import Flask, request
 import flask
 from flask_cors import CORS
 
-#TODO: Optimize ODR reading, Fix data collection for Base Rent portion of PDF template 1.
+#TODO: Optimize ODR reading, Generalize the starting 3 chars for Template 1 reading. 
 
 class rentRollEntity: #Individual Items on a Rent Roll
     def __init__(self):
@@ -75,6 +75,13 @@ def flaskConnect():
             data = json.load(f)
         return flask.jsonify(data)
 
+    @app.route("", methods=["POST"])
+    def parseFile():
+        return_data = {
+            "status": "success"
+        }
+        return return_data
+    
     app.run()
     return
 
@@ -94,8 +101,9 @@ def JSONToFire(JSONfile, DataBaseRef):
     ref.set(file_contents)
     return
 
-def readPDFTemplate1(filename): #For this template, a new item is begins when an line starts with "TCC"
+def readPDFCrestWell(filename): #For this template, a new item is begins when an line starts with "TCC"
     #For this template, I have to iterate twice to get pdfminersix to read Base rent correctly. See difference in LAPParms
+    filename = "TestRolls/" + filename
     LAPParmsBR = LAParams(0.5, 2, 0.2, 0.1, None, False, False)
     textBR = extract_text(filename, None, None, 0, True, "utf-8", LAPParmsBR)
     textLinesBR = textBR.splitlines()
@@ -105,11 +113,13 @@ def readPDFTemplate1(filename): #For this template, a new item is begins when an
     brLineItem = ""
     brCount = 0
     oldLeaseNum = ""
-    for line in textLinesBR[:200]:
-        print(line)
+    validCodes = ["TCC", "SPA", "WBC"]
+
+    for line in textLinesBR:
+        #print(line)
         if(line == ''):
             pass
-        elif(line[:3] == "TCC"):
+        elif(line[:3] in validCodes):
             if(loopedOnce):
                 BaseRentDict[oldLeaseNum] = brLineItem
                 brLineItem = ""
@@ -133,12 +143,13 @@ def readPDFTemplate1(filename): #For this template, a new item is begins when an
     allRoll = rentRoll()
     itemCount = 0
     brCount = 0
+    newRoll = rentRollEntity()
 
-    for line in textLines[:200]: #Remember to remove the :500 limiter after testing
+    for line in textLines:
         #print(line)
         if(line == ''):
             itemCount = itemCount - 1
-        elif(line[:3] == "TCC"): #A new item is made.
+        elif(line[:3] in validCodes): #A new item is made.
             newRoll = rentRollEntity()
             newRoll.leaseNum = line
         elif(itemCount == 1):
@@ -190,7 +201,7 @@ def rollToJSON(rentRoll):
 def main():
     #readImage('1650 lease rent roll.png')
     #flaskConnect()
-    gotRoll = readPDFTemplate1('2018-05-16 - Tamarack - Base Rent Roll.pdf')
+    gotRoll = readPDFCrestWell('2018-05-16 - Spall - Base Rent Roll.pdf')
     jsonRolls = rollToJSON(gotRoll)
 
     #firebaseConnect()
