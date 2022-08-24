@@ -12,8 +12,7 @@ from firebase_admin import credentials
 from firebase_admin import db
 
 #Web App framework for python
-import os
-from flask import Flask, request, flash, redirect, url_for
+from flask import Flask, request, flash, redirect, url_for, render_template
 import flask
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
@@ -68,7 +67,6 @@ def flaskConnect():
     ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
     app = Flask(__name__)
-    app.secret_key = "password"
     app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     CORS(app)
     
@@ -76,14 +74,14 @@ def flaskConnect():
         return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    @app.route("/")
+    @app.route("/", methods= ['GET', 'POST'])
     def helloworld():
-        return "Hello World!"
+        return render_template("index.html")
 
     @app.route("/users", methods=["GET"])
     def users():
         print("users endpoint reached...")
-        with open("out.json", "r") as f:
+        with open("backend/out.json", "r") as f:
             data = json.load(f)
         return flask.jsonify(data)
 
@@ -100,12 +98,12 @@ def flaskConnect():
         resp = {"success": True, "response": "Non-post"}
         return flask.jsonify(resp)
         
-    app.run()
+    app.run("0.0.0.0")
     return
 
 #Firebase START
 def firebaseConnect():
-    cred = credentials.Certificate("./firebasekeys.json")
+    cred = credentials.Certificate("./backend/firebasekeys.json")
     firebase_admin.initialize_app(cred, {
         'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
     })
@@ -149,7 +147,7 @@ def readPDFCrestWell(filename): #For this template, a new item is begins when an
             brLineItem = brLineItem + " " + line
             brCount += 1
             if(brCount > 3):
-                brLineItem += "\n"
+                brLineItem += ". "
                 brCount = 0
     BaseRentDict[oldLeaseNum] = brLineItem
 
@@ -210,7 +208,7 @@ def rollToJSON(rentRoll):
     x = rentRoll.retMasterDict()
 
     #To out.json:
-    filename = 'out.json'
+    filename = 'backend/out.json'
     with open(filename, 'w', encoding='utf-8') as f:
         json.dump(x, f, ensure_ascii=False, indent=4)
 

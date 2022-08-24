@@ -28,7 +28,7 @@ function getUsers() {
     xhr = new XMLHttpRequest();
     xhr.onreadystatechange = dataCallback;
     // asynchronous requests
-    xhr.open("GET", "http://localhost:5000/users", true);
+    xhr.open("GET", "users", true);
     // Send the request over the network
     xhr.send(null);
 }
@@ -41,7 +41,7 @@ function sendData(form) {
     xhr = new XMLHttpRequest()
     xhr.onreadystatechange = sendDataCallback;
     // asynchronous requests
-    xhr.open("POST", "http://localhost:5000/fileSend", true); //http://localhost:5000/
+    xhr.open("POST", "fileSend", true); //http://localhost:5000/
     //xhr.setRequestHeader("Content-Type", "multipart/form-data");
 
     // Send the request over the network
