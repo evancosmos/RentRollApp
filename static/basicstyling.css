@@ -1,3 +1,5 @@
 #displayRoll {
-    float: right
+    border-top-style: solid;
+    border-top-color: black;
+    border-top-width: 2px;
 }

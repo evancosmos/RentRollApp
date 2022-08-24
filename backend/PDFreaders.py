@@ -57,7 +57,7 @@ def readPDFCrestWell(filename): #For this template, a new item is begins when an
     brLineItem = ""
     brCount = 0
     oldLeaseNum = ""
-    validCodes = ["TCC", "SPA", "WBC", "SPR"]
+    validCodes = ["TCC", "SPA", "WBC", "SPR", "LAK"]
 
     for line in textLinesBR:
         #print(line)

@@ -56,7 +56,6 @@ def flaskConnect():
     app.run("0.0.0.0")
     return
 
-#Firebase START
 def firebaseConnect():
     cred = credentials.Certificate("./backend/firebasekeys.json")
     firebase_admin.initialize_app(cred, {
@@ -64,7 +63,7 @@ def firebaseConnect():
     })
     return
 
-def JSONToFire(JSONfile, DataBaseRef):
+def JSONToFirebase(JSONfile, DataBaseRef):
     with open(JSONfile, 'r') as f:
         file_contents = json.load(f)
 
@@ -72,13 +71,8 @@ def JSONToFire(JSONfile, DataBaseRef):
     ref.set(file_contents)
     return
 
-
 def main():
-    #readImage('1650 lease rent roll.png')
     flaskConnect()
-    #gotRoll = readPDFCrestWell('2018-05-16 - Spall - Base Rent Roll.pdf')
-    #jsonRolls = rollToJSON(gotRoll)
-
     #firebaseConnect()
     #JSONToFire(jsonRolls, 'Test12')
 

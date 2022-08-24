@@ -9,8 +9,10 @@ function dataCallback() {
         console.log("User data received!");
         dataDiv = document.getElementById('displayRoll');
         // Set current data text
-        dataDiv.innerHTML = xhr.responseText;
+        var obj = JSON.parse(xhr.response);
+        dataDiv.innerHTML = JSON.stringify(obj, undefined, 2);
     }
+    return;
 }
 
 function sendDataCallback() {
@@ -21,6 +23,7 @@ function sendDataCallback() {
         // Set current data text
         dataDiv.innerHTML = xhr.responseText;
     }
+    return;
 }
 
 function getUsers() {
@@ -31,22 +34,31 @@ function getUsers() {
     xhr.open("GET", "users", true);
     // Send the request over the network
     xhr.send(null);
+    return;
 }
 
 function sendData(form) {
-    var formData = new FormData(form);
+    let myPromise = new Promise(function(resolve, reject) {
+        var formData = new FormData(form);
 
-    responseOut = document.getElementById('displayRoll');
+        xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = sendDataCallback;
+        // asynchronous requests
+        xhr.open("POST", "fileSend", true);
+        //xhr.setRequestHeader("Content-Type", "multipart/form-data");
 
-    xhr = new XMLHttpRequest()
-    xhr.onreadystatechange = sendDataCallback;
-    // asynchronous requests
-    xhr.open("POST", "fileSend", true); //http://localhost:5000/
-    //xhr.setRequestHeader("Content-Type", "multipart/form-data");
+        // Waiting text
+        responseOut = document.getElementById('displayRoll');
+        responseOut.innerHTML = "Reading the file...";
+        
+        xhr.send(formData);
 
-    // Send the request over the network
-    dataDiv = document.getElementById('displayRoll');
-    dataDiv.innerHTML = "Reading the file...";
-    
-    xhr.send(formData);
+        resolve(xhr.response);
+    });
+
+    myPromise.then(
+        () => getUsers()
+    );
+
+    return;
 }

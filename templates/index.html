@@ -1,7 +1,7 @@
 <html>
     <header>
         <h1>Test Page for Rent Roll Web App<h1>
-        <link rel="stylesheet" href=""/>
+        <link rel="stylesheet" href="../static/basicstyling.css"/>
     </header> 
 
     <script src="{{ url_for('static', filename='Connection.js') }}"></script>
@@ -12,10 +12,9 @@
             <input id="file" type="file" name="static_file" />
             <button id="upload-button" onclick="sendData(this.form)"> Upload </button>
         </form>
+        
+        <pre id="displayRoll">This is where the result will be displayed </pre>
 
-        <textarea id="displayRoll" rows="30" cols="200">This is where parsed rent roll information will be displayed</textarea>
-
-        <button onclick="getUsers()">Retrive last parsed file</button>
     </body>
 
 </html>
