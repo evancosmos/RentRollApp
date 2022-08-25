@@ -2,13 +2,15 @@
 #https://cloud.google.com
 
 # 1 
-FROM python:3.7
+FROM python:3.10-slim
 
 # 2
-RUN pip install Flask gunicorn
+ENV APP_HOME /app
+WORKDIR $APP_HOME
+COPY . ./
 
 # 3
-WORKDIR /
+RUN pip install --no-cache-dir -r requirements.txt
 
 # 4
 ENV PORT 8080

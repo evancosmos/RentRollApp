@@ -15,10 +15,12 @@ import flask
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
+import os
+
 #TODO: Optimize ODR reading, Generalize the starting 3 chars for Template 1 reading, Get Hosting Fully online, Add user accounts, Connect database to processes. 
 
 def flaskConnect():
-    UPLOAD_FOLDER = '/home/wolf/Documents/RentRollApp/backend/'
+    UPLOAD_FOLDER = './backend/'
     ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
     app = Flask(__name__)
@@ -53,7 +55,7 @@ def flaskConnect():
         resp = {"success": True, "response": "Non-post"}
         return flask.jsonify(resp)
         
-    app.run("0.0.0.0")
+    app.run("0.0.0.0", port=int(os.environ.get("PORT", 8080)))
     return
 
 def firebaseConnect():
