@@ -1,0 +1,23 @@
+{
+  "name": "rentrollapp",
+  "version": "1.0.0",
+  "description": "This is a web app designed to take PDFs or Images of certain Rent Rolls, then parse, calculate, and store them server-side.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evancosmos/RentRollApp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/evancosmos/RentRollApp/issues"
+  },
+  "homepage": "https://github.com/evancosmos/RentRollApp#readme",
+  "devDependencies": {
+    "firebase-tools": "^11.8.0"
+  }
+}

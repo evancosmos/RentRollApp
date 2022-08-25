@@ -1,6 +1,9 @@
 firebasekeys.json
-backend/__pycache__
 TestRolls
 .firebase
 tempfile.*
-out.json
+backend/__pycache__
+backend/out.json
+backend/OCRout.json
+backend/tempfile.pdf
+node_modules

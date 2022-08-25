@@ -3,17 +3,17 @@
     "rules": "database.rules.json"
   },
   "hosting": {
-    "public": "frontend",
+    "public": "static",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
     ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
+    "rewrites": [{
+      "source": "**",
+      "run": {
+        "serviceId": "flask-fire"
       }
-    ]
+    }]
   }
 }

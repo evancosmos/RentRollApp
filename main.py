@@ -19,44 +19,40 @@ import os
 
 #TODO: Optimize ODR reading, Generalize the starting 3 chars for Template 1 reading, Get Hosting Fully online, Add user accounts, Connect database to processes. 
 
-def flaskConnect():
-    UPLOAD_FOLDER = './backend/'
-    ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
+UPLOAD_FOLDER = './backend/'
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
-    app = Flask(__name__)
-    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-    CORS(app)
-    
-    def allowed_file(filename):
-        return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+CORS(app)
 
-    @app.route("/", methods= ['GET', 'POST'])
-    def helloworld():
-        return render_template("index.html")
+def allowed_file(filename):
+    return '.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-    @app.route("/users", methods=["GET"])
-    def users():
-        print("users endpoint reached...")
-        with open("backend/out.json", "r") as f:
-            data = json.load(f)
-        return flask.jsonify(data)
+@app.route("/", methods= ['GET', 'POST'])
+def helloworld():
+    return render_template("index.html")
 
-    @app.route('/fileSend', methods=['GET', 'POST'])
-    def upload_file():
-        if(request.method == "POST"):
-            print("Got request in static files") 
-            print(request.files['static_file'])
-            f = request.files['static_file']
-            f.save(UPLOAD_FOLDER + "tempfile" + f.filename[-4:])
-            readPDFCrestWell(UPLOAD_FOLDER + "tempfile" + f.filename[-4:])
-            resp = {"success": True, "response": "file saved!"}
-            return flask.jsonify(resp)
-        resp = {"success": True, "response": "Non-post"}
+@app.route("/users", methods=["GET"])
+def users():
+    print("users endpoint reached...")
+    with open("backend/out.json", "r") as f:
+        data = json.load(f)
+    return flask.jsonify(data)
+
+@app.route('/fileSend', methods=['GET', 'POST'])
+def upload_file():
+    if(request.method == "POST"):
+        print("Got request in static files") 
+        print(request.files['static_file'])
+        f = request.files['static_file']
+        f.save(UPLOAD_FOLDER + "tempfile" + f.filename[-4:])
+        readPDFCrestWell(UPLOAD_FOLDER + "tempfile" + f.filename[-4:])
+        resp = {"success": True, "response": "file saved!"}
         return flask.jsonify(resp)
-        
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
-    return
+    resp = {"success": True, "response": "Non-post"}
+    return flask.jsonify(resp)
 
 def firebaseConnect():
     cred = credentials.Certificate("./backend/firebasekeys.json")
@@ -73,10 +69,5 @@ def JSONToFirebase(JSONfile, DataBaseRef):
     ref.set(file_contents)
     return
 
-def main():
-    flaskConnect()
-    #firebaseConnect()
-    #JSONToFire(jsonRolls, 'Test12')
-
 if __name__ == "__main__":
-    main()
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
