@@ -2,3 +2,5 @@
 README.md
 .firebase
 TestRolls
+static
+__pycache__

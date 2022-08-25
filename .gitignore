@@ -2,3 +2,5 @@ firebasekeys.json
 backend/__pycache__
 TestRolls
 .firebase
+tempfile.*
+out.json

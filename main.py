@@ -55,7 +55,7 @@ def flaskConnect():
         resp = {"success": True, "response": "Non-post"}
         return flask.jsonify(resp)
         
-    app.run("0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
     return
 
 def firebaseConnect():

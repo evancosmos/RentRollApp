@@ -4,16 +4,12 @@
 # 1 
 FROM python:3.10-slim
 
-# 2
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 
-# 3
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# 4
 ENV PORT 8080
 
-# 5
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 app:app
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 main:app
