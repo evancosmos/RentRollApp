@@ -47,8 +47,8 @@ def upload_file():
         print("Got request in static files") 
         print(request.files['static_file'])
         f = request.files['static_file']
-        f.save(UPLOAD_FOLDER + "tempfile" + f.filename[-4:])
-        readPDFCrestWell(UPLOAD_FOLDER + "tempfile" + f.filename[-4:])
+
+        readPDFCrestWell(f.stream.read())
         resp = {"success": True, "response": "file saved!"}
         return flask.jsonify(resp)
     resp = {"success": True, "response": "Non-post"}

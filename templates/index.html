@@ -1,7 +1,7 @@
 <html>
     <header>
         <h1>Test Page for Rent Roll Web App<h1>
-        <link rel="stylesheet" href="../static/basicstyling.css"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='basicstyling.css') }}"/>
     </header> 
 
     <script src="{{ url_for('static', filename='Connection.js') }}"></script>

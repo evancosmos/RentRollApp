@@ -1,6 +1,7 @@
 #Read text from PDFs
 from crypt import methods
-from pdfminer.high_level import extract_text
+from io import BytesIO
+from pdfminer.high_level import extract_text, extract_text_to_fp
 from pdfminer.layout import LAParams
 
 import json
@@ -46,10 +47,13 @@ class rentRoll: #The collection of items on a rent roll
             id += 1
         return newMasterDict
 
-def readPDFCrestWell(filename): #For this template, a new item is begins when an line starts with "TCC"
+def readPDFCrestWell(file): #For this template, a new item is begins when an line starts with "TCC"
     #For this template, I have to iterate twice to get pdfminersix to read Base rent correctly. See difference in LAPParms
+
+    fObj = BytesIO(file)
+
     LAPParmsBR = LAParams(0.5, 2, 0.2, 0.1, None, False, False)
-    textBR = extract_text(filename, None, None, 0, True, "utf-8", LAPParmsBR)
+    textBR = extract_text(fObj, None, None, 0, True, "utf-8", LAPParmsBR)
     textLinesBR = textBR.splitlines()
 
     loopedOnce = False
@@ -81,7 +85,7 @@ def readPDFCrestWell(filename): #For this template, a new item is begins when an
     BaseRentDict[oldLeaseNum] = brLineItem
 
     LAPParms = LAParams(0.5, 2, 0.2, 0.1, 0.5, False, False)
-    text = extract_text(filename, None, None, 0, True, "utf-8", LAPParms)
+    text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
     textLines = text.splitlines()
     #Once "TCC" is read from the start of a line, make a new roll
     allRoll = rentRoll()

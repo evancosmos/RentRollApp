@@ -1,7 +1,4 @@
 {
-  "database": {
-    "rules": "database.rules.json"
-  },
   "hosting": {
     "public": "static",
     "ignore": [
@@ -15,5 +12,8 @@
         "serviceId": "flask-fire"
       }
     }]
+  },
+  "database": {
+    "rules": "database.rules.json"
   }
 }
