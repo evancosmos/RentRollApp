@@ -4,8 +4,6 @@ This is a web app designed to take PDFs or Images of Rent Roll Documents, then p
 
 ## How it works
 
-*TODO: Add diagram*
-Diagram:
 ```mermaid
 flowchart LR;
 A[Front End - Firebase Hosting]
@@ -14,5 +12,3 @@ C[(DataBase - Firebase Realtime Database)]
 
 A --- B --- C
 ```
-
-An image or pdf is uploaded on the front end website. This is passed to either pdfminer.six for pdf reading or pytesseract or image reading. The data is parsed into a json file for calculations and storage on the Firebase Database.
