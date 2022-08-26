@@ -6,6 +6,11 @@ from pdfminer.layout import LAParams
 
 import json
 
+#Hosting Service
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+
 class rentRollEntity: #Individual Items on a Rent Roll
     def __init__(self):
         self.leaseNum = ""
@@ -61,7 +66,7 @@ def readPDFCrestWell(file): #For this template, a new item is begins when an lin
     brLineItem = ""
     brCount = 0
     oldLeaseNum = ""
-    validCodes = ["TCC", "SPA", "WBC", "SPR", "LAK"]
+    validCodes = ["TCC", "SPA", "WBC", "SPR", "LAK", "COR", "DEP"]
 
     for line in textLinesBR:
         #print(line)
@@ -133,16 +138,25 @@ def readPDFCrestWell(file): #For this template, a new item is begins when an lin
         itemCount += 1
 
     allRoll.addRoll(newRoll)
-    rollToJSON(allRoll)
+
+    #print(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')))
+    #Put the new item in the database
+    JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
+
     return allRoll
 
-def rollToJSON(rentRoll):
+def firebaseConnect():
+    cred = credentials.Certificate("./backend/firebasekeys.json")
+    firebase_admin.initialize_app(cred, {
+        'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
+    })
+    return
 
-    x = rentRoll.retMasterDict()
+def JSONToFirebase(JSONstr, DataBaseRef):
+    ref = db.reference(DataBaseRef)
+    ref.set(json.loads(JSONstr))
+    return
 
-    #To out.json:
-    filename = 'backend/out.json'
-    with open(filename, 'w', encoding='utf-8') as f:
-        json.dump(x, f, ensure_ascii=False, indent=4)
-
-    return filename
+def FirebaseToJSON(DataBaseRef):
+    ref = db.reference(DataBaseRef)
+    return ref.get()

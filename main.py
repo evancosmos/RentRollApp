@@ -1,13 +1,8 @@
 #PDF Readers
-from backend.PDFreaders import readPDFCrestWell
+from backend.PDFreaders import readPDFCrestWell, FirebaseToJSON, firebaseConnect
 
 #Output to site/database with json
 import json
-
-#Hosting Service
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
 
 #Web App framework for python
 from flask import Flask, request, flash, redirect, url_for, render_template
@@ -37,9 +32,8 @@ def helloworld():
 @app.route("/users", methods=["GET"])
 def users():
     print("users endpoint reached...")
-    with open("backend/out.json", "r") as f:
-        data = json.load(f)
-    return flask.jsonify(data)
+    ret = FirebaseToJSON("TestItem")
+    return flask.jsonify(ret)
 
 @app.route('/fileSend', methods=['GET', 'POST'])
 def upload_file():
@@ -54,20 +48,6 @@ def upload_file():
     resp = {"success": True, "response": "Non-post"}
     return flask.jsonify(resp)
 
-def firebaseConnect():
-    cred = credentials.Certificate("./backend/firebasekeys.json")
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
-    })
-    return
-
-def JSONToFirebase(JSONfile, DataBaseRef):
-    with open(JSONfile, 'r') as f:
-        file_contents = json.load(f)
-
-    ref = db.reference(DataBaseRef)
-    ref.set(file_contents)
-    return
-
 if __name__ == "__main__":
+    firebaseConnect()
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
