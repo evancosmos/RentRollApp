@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 
 import os
 
-#TODO: Optimize ODR reading, Generalize the starting 3 chars for Template 1 reading, Get Hosting Fully online, Add user accounts, Connect database to processes. 
+#TODO: Optimize ODR reading, Add user accounts.
 
 UPLOAD_FOLDER = './backend/'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
@@ -27,6 +27,7 @@ def allowed_file(filename):
 
 @app.route("/", methods= ['GET', 'POST'])
 def helloworld():
+    firebaseConnect()
     return render_template("index.html")
 
 @app.route("/users", methods=["GET"])
@@ -49,5 +50,4 @@ def upload_file():
     return flask.jsonify(resp)
 
 if __name__ == "__main__":
-    firebaseConnect()
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))

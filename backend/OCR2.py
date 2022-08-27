@@ -91,4 +91,4 @@ def OCR(filename, display = False, print_text = False, write = False):
     return 0
     
 if __name__ == "__main__":
-    OCR("1650 lease rent roll.png")
+    OCR("../TestRolls/higherRes.png")
