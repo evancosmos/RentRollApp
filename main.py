@@ -1,14 +1,11 @@
 #PDF Readers
-from backend.PDFreaders import readPDFCrestWell, FirebaseToJSON, firebaseConnect
-
-#Output to site/database with json
-import json
+from io import BytesIO
+from backend.PDFreaders import readPDFCrestWell, FirebaseToJSON
 
 #Web App framework for python
-from flask import Flask, request, flash, redirect, url_for, render_template
+from flask import Flask, request, render_template
 import flask
 from flask_cors import CORS
-from werkzeug.utils import secure_filename
 
 import os
 
@@ -27,7 +24,6 @@ def allowed_file(filename):
 
 @app.route("/", methods= ['GET', 'POST'])
 def helloworld():
-    firebaseConnect()
     return render_template("index.html")
 
 @app.route("/users", methods=["GET"])
@@ -42,8 +38,11 @@ def upload_file():
         print("Got request in static files") 
         print(request.files['static_file'])
         f = request.files['static_file']
-
-        readPDFCrestWell(f.stream.read())
+        if(f not in ALLOWED_EXTENSIONS):
+            resp = {"success": False, "response": "Not a valid file type"}
+            return flask.jsonify(resp)
+        fObj = BytesIO(f.stream.read())
+        readPDFCrestWell(fObj)
         resp = {"success": True, "response": "file saved!"}
         return flask.jsonify(resp)
     resp = {"success": True, "response": "Non-post"}

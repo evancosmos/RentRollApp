@@ -7,8 +7,16 @@
     <script src="{{ url_for('static', filename='Connection.js') }}"></script>
 
     <body>
+        <label for="baseRollTemplates">What template are you uploading?</label>
+        <select name="baseRollTemplates" id="BRT">
+            <option>Crestwell</option>
+            <option>CBRE</option>
+            <option>Affortable Housing Societies</option>
+            <option>Fir Apts</option>
+        </select>
+
         <div>Choose a rent roll to read</div>
-        <form enctype = "multipart/form-data" onsubmit="return false;" >
+        <form enctype = "multipart/form-data" onsubmit="return false;">
             <input id="file" type="file" name="static_file" />
             <button id="upload-button" onclick="sendData(this.form)"> Upload </button>
         </form>

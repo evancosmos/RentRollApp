@@ -37,6 +37,11 @@ function getUsers() {
     return;
 }
 
+function giveError(e){
+    dataDiv = document.getElementById('displayRoll');
+    dataDiv.innerHTML = e;
+}
+
 function sendData(form) {
     let myPromise = new Promise(function(resolve, reject) {
         var formData = new FormData(form);
@@ -53,11 +58,17 @@ function sendData(form) {
         
         xhr.send(formData);
 
-        resolve(xhr.response);
+        if(xhr.response.success == false){
+            reject("Error");
+        }
+        else {
+            resolve(xhr.response);
+        }
     });
 
     myPromise.then(
-        () => getUsers()
+        () => getUsers(),
+        (error) => giveError(error)
     );
 
     return;

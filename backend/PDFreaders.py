@@ -1,6 +1,5 @@
 #Read text from PDFs
 from crypt import methods
-from io import BytesIO
 from pdfminer.high_level import extract_text, extract_text_to_fp
 from pdfminer.layout import LAParams
 
@@ -52,10 +51,8 @@ class rentRoll: #The collection of items on a rent roll
             id += 1
         return newMasterDict
 
-def readPDFCrestWell(file): #For this template, a new item is begins when an line starts with "TCC"
+def readPDFCrestWell(fObj): #For this template, a new item is begins when an line starts with "TCC"
     #For this template, I have to iterate twice to get pdfminersix to read Base rent correctly. See difference in LAPParms
-
-    fObj = BytesIO(file)
 
     LAPParmsBR = LAParams(0.5, 2, 0.2, 0.1, None, False, False)
     textBR = extract_text(fObj, None, None, 0, True, "utf-8", LAPParmsBR)
@@ -67,6 +64,7 @@ def readPDFCrestWell(file): #For this template, a new item is begins when an lin
     brCount = 0
     oldLeaseNum = ""
     validCodes = ["TCC", "SPA", "WBC", "SPR", "LAK", "COR", "DEP"]
+    validRentInfo = ["Base Rent", "Free Rent", "Fixturing", "Month to "]
 
     for line in textLinesBR:
         #print(line)
@@ -78,7 +76,7 @@ def readPDFCrestWell(file): #For this template, a new item is begins when an lin
                 brLineItem = ""
             oldLeaseNum = line
             loopedOnce = True
-        elif((line[:9] == "Base Rent") and (loopedOnce)):
+        elif((line[:9] in validRentInfo) and (loopedOnce)):
             brLineItem += line
             brCount = 1
         elif(brCount > 0):
@@ -89,7 +87,7 @@ def readPDFCrestWell(file): #For this template, a new item is begins when an lin
                 brCount = 0
     BaseRentDict[oldLeaseNum] = brLineItem
 
-    LAPParms = LAParams(0.5, 2, 0.2, 0.1, 0.5, False, False)
+    LAPParms = LAParams(0.5, 1.5, 0.2, 0.1, 0.9, False, False)
     text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
     textLines = text.splitlines()
     #Once "TCC" is read from the start of a line, make a new roll
@@ -139,8 +137,8 @@ def readPDFCrestWell(file): #For this template, a new item is begins when an lin
 
     allRoll.addRoll(newRoll)
 
-    #print(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')))
-    #Put the new item in the database
+    #Put new item in database
+    firebaseConnect()
     JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
 
     return allRoll
@@ -160,3 +158,11 @@ def JSONToFirebase(JSONstr, DataBaseRef):
 def FirebaseToJSON(DataBaseRef):
     ref = db.reference(DataBaseRef)
     return ref.get()
+
+if __name__ == "__main__":
+    allRoll = readPDFCrestWell("../TestRolls/Crestwell/Broadway - Commercial 2016 Base Rent Roll (Revised).pdf")
+
+    out_file = open("out.json", "w")
+    json.dump(allRoll.retMasterDict(), out_file, ensure_ascii=False, indent=0, separators=(',', ':'))
+    out_file.close()
+    
