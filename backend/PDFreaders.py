@@ -138,24 +138,26 @@ def readPDFCrestWell(fObj): #For this template, a new item is begins when an lin
     allRoll.addRoll(newRoll)
 
     #Put new item in database
-    firebaseConnect()
     JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
 
     return allRoll
 
 def firebaseConnect():
-    cred = credentials.Certificate("./backend/firebasekeys.json")
-    firebase_admin.initialize_app(cred, {
-        'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
-    })
+    if not firebase_admin._apps:
+        cred = credentials.Certificate("./backend/firebasekeys.json")
+        firebase_admin.initialize_app(cred, {
+            'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
+        })
     return
 
 def JSONToFirebase(JSONstr, DataBaseRef):
+    firebaseConnect()
     ref = db.reference(DataBaseRef)
     ref.set(json.loads(JSONstr))
     return
 
 def FirebaseToJSON(DataBaseRef):
+    firebaseConnect()
     ref = db.reference(DataBaseRef)
     return ref.get()
 

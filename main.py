@@ -38,7 +38,7 @@ def upload_file():
         print("Got request in static files") 
         print(request.files['static_file'])
         f = request.files['static_file']
-        if(f not in ALLOWED_EXTENSIONS):
+        if((f.filename)[-3:] not in ALLOWED_EXTENSIONS):
             resp = {"success": False, "response": "Not a valid file type"}
             return flask.jsonify(resp)
         fObj = BytesIO(f.stream.read())

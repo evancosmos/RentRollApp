@@ -58,17 +58,11 @@ function sendData(form) {
         
         xhr.send(formData);
 
-        if(xhr.response.success == false){
-            reject("Error");
-        }
-        else {
-            resolve(xhr.response);
-        }
+        resolve(xhr.response);
     });
 
     myPromise.then(
-        () => getUsers(),
-        (error) => giveError(error)
+        () => getUsers()
     );
 
     return;
