@@ -3,3 +3,4 @@ README.md
 .firebase
 TestRolls
 __pycache__
+node_modules

@@ -7,4 +7,5 @@ opencv_python==4.6.0.66
 pdfminer==20191125
 pdfminer.six==20220524
 pytesseract==0.3.10
-Werkzeug==2.2.2
+setuptools==45.2.0
+six==1.14.0
