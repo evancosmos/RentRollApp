@@ -4,6 +4,7 @@ from pdfminer.high_level import extract_text, extract_text_to_fp
 from pdfminer.layout import LAParams
 
 import json
+import os
 
 #Hosting Service
 import firebase_admin
@@ -144,7 +145,9 @@ def readPDFCrestWell(fObj): #For this template, a new item is begins when an lin
 
 def firebaseConnect():
     if not firebase_admin._apps:
-        cred = credentials.Certificate("./backend/firebasekeys.json")
+        with open("firebasekeys.json", "r") as f:
+            certDict = json.load(f)
+        cred = credentials.Certificate(certDict)
         firebase_admin.initialize_app(cred, {
             'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
         })

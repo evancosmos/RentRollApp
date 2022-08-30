@@ -62,7 +62,7 @@ function sendData(form) {
     });
 
     myPromise.then(
-        () => getUsers()
+        () => setTimeout(getUsers, 4000)
     );
 
     return;
