@@ -145,9 +145,8 @@ def readPDFCrestWell(fObj): #For this template, a new item is begins when an lin
 
 def firebaseConnect():
     if not firebase_admin._apps:
-        with open("firebasekeys.json", "r") as f:
-            certDict = json.load(f)
-        cred = credentials.Certificate(certDict)
+        credPath = os.path.dirname(os.path.abspath(__file__)) + "/../firebasekeys.json"
+        cred = credentials.Certificate(credPath)
         firebase_admin.initialize_app(cred, {
             'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
         })

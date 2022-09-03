@@ -6,7 +6,7 @@ var xhr = null;
 function dataCallback() {
     // Check response is ready or not
     if (xhr.readyState == 4 && xhr.status == 200) {
-        console.log("User data received!");
+        console.log("Listing data received!");
         dataDiv = document.getElementById('displayRoll');
         // Set current data text
         var obj = JSON.parse(xhr.response);
@@ -26,12 +26,12 @@ function sendDataCallback() {
     return;
 }
 
-function getUsers() {
-    console.log("Get users...");
+function retriveListings() {
+    console.log("Get listings...");
     xhr = new XMLHttpRequest();
     xhr.onreadystatechange = dataCallback;
     // asynchronous requests
-    xhr.open("GET", "users", true);
+    xhr.open("GET", "retriveListings", true);
     // Send the request over the network
     xhr.send(null);
     return;
@@ -50,7 +50,6 @@ function sendData(form) {
         xhr.onreadystatechange = sendDataCallback;
         // asynchronous requests
         xhr.open("POST", "fileSend", true);
-        //xhr.setRequestHeader("Content-Type", "multipart/form-data");
 
         // Waiting text
         responseOut = document.getElementById('displayRoll');
@@ -62,7 +61,7 @@ function sendData(form) {
     });
 
     myPromise.then(
-        () => setTimeout(getUsers, 4000)
+        () => setTimeout(retriveListings, 4000) //Manual wait for database to update, should change to auto start when db gets updated.
     );
 
     return;

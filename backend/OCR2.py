@@ -10,7 +10,7 @@ def OCR(filename, display = False, print_text = False, write = False):
     
     src = cv.imread(cv.samples.findFile(filename))
     
-    horizontal, vertical = detect_lines(src, minLinLength=350, display=False, write = True)
+    horizontal, vertical = detect_lines(src, minLinLength=300, display=False, write = True)
     
     ## invert area (all 0 for no inverted area)
     left_line_index = 0
@@ -91,4 +91,4 @@ def OCR(filename, display = False, print_text = False, write = False):
     return 0
     
 if __name__ == "__main__":
-    OCR("../TestRolls/higherRes.png")
+    OCR("../TestRolls/1650 lease rent roll.png")

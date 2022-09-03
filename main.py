@@ -26,9 +26,9 @@ def allowed_file(filename):
 def helloworld():
     return render_template("index.html")
 
-@app.route("/users", methods=["GET"])
-def users():
-    print("users endpoint reached...")
+@app.route("/retriveListings", methods=["GET"])
+def listings():
+    #Get the listing for the current user
     ret = FirebaseToJSON("TestItem")
     return flask.jsonify(ret)
 
@@ -45,8 +45,8 @@ def upload_file():
         readPDFCrestWell(fObj)
         resp = {"success": True, "response": "file saved!"}
         return flask.jsonify(resp)
-    resp = {"success": True, "response": "Non-post"}
-    return flask.jsonify(resp)
+    resp = {"success": True}
+    return flask.jsonify(resp), 200
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
