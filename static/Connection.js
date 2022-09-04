@@ -1,5 +1,6 @@
 //https://tms-dev-blog.com/python-backend-with-javascript-frontend-how-to/
 //https://python.plainenglish.io/how-to-send-a-file-using-javascript-and-python-5038dc39707b
+//https://medium.com/@nschairer/flask-api-authentication-with-firebase-9affc7b64715
 
 var xhr = null;
 
@@ -9,11 +10,9 @@ function signUpUser(){
     // asynchronous requests
     xhr.open("POST", "signUp", true);
 
-    var userData = 
-    {
-        "email": "fakeemail@live.ca",
-        "password": "apple123"
-    };
+    var userData = new FormData();
+    userData.append("email", "fakeemail@live.ca")
+    userData.append("password", "apple123")
 
     xhr.send(userData);
 }
