@@ -3,6 +3,21 @@
 
 var xhr = null;
 
+function signUpUser(){
+    xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = sendDataCallback;
+    // asynchronous requests
+    xhr.open("POST", "signUp", true);
+
+    var userData = 
+    {
+        "email": "fakeemail@live.ca",
+        "password": "apple123"
+    };
+
+    xhr.send(userData);
+}
+
 function dataCallback() {
     // Check response is ready or not
     if (xhr.readyState == 4 && xhr.status == 200) {
@@ -49,7 +64,7 @@ function sendData(form) {
         xhr = new XMLHttpRequest();
         xhr.onreadystatechange = sendDataCallback;
         // asynchronous requests
-        xhr.open("POST", "fileSend", true);
+        xhr.open("POST", "fileSend", false);
 
         // Waiting text
         responseOut = document.getElementById('displayRoll');
@@ -61,7 +76,7 @@ function sendData(form) {
     });
 
     myPromise.then(
-        () => setTimeout(retriveListings, 4000) //Manual wait for database to update, should change to auto start when db gets updated.
+        () => retriveListings()
     );
 
     return;

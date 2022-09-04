@@ -1,4 +1,5 @@
 #PDF Readers
+from crypt import methods
 from io import BytesIO
 from backend.PDFreaders import readPDFCrestWell, FirebaseToJSON
 
@@ -6,6 +7,10 @@ from backend.PDFreaders import readPDFCrestWell, FirebaseToJSON
 from flask import Flask, request, render_template
 import flask
 from flask_cors import CORS
+
+#Firebase
+import firebase_admin
+from firebase_admin import credentials, auth
 
 import os
 
@@ -29,6 +34,7 @@ def helloworld():
 @app.route("/retriveListings", methods=["GET"])
 def listings():
     #Get the listing for the current user
+    firebaseConnect()
     ret = FirebaseToJSON("TestItem")
     return flask.jsonify(ret)
 
@@ -42,11 +48,37 @@ def upload_file():
             resp = {"success": False, "response": "Not a valid file type"}
             return flask.jsonify(resp)
         fObj = BytesIO(f.stream.read())
+        firebaseConnect()
         readPDFCrestWell(fObj)
         resp = {"success": True, "response": "file saved!"}
         return flask.jsonify(resp)
     resp = {"success": True}
     return flask.jsonify(resp), 200
+
+@app.route('/signUp', methods=['POST'])
+def signup():
+    firebaseConnect()
+    email = request.form.get('email')
+    password = request.form.get('password')
+    if email is None or password is None:
+        return {'message': 'Error missing email or password'},400
+    try:
+        user = auth.create_user(
+               email=email,
+               password=password
+        )
+        return {'message': f'Successfully created user {user.uid}'},200
+    except:
+        return {'message': 'Error creating user'},400
+
+def firebaseConnect():
+    if not firebase_admin._apps:
+        credPath = os.path.dirname(os.path.abspath(__file__)) + "/firebasekeys.json"
+        cred = credentials.Certificate(credPath)
+        firebase_admin.initialize_app(cred, {
+            'databaseURL': "https://rent-roll-webapp-default-rtdb.firebaseio.com/"
+        })
+    return
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
