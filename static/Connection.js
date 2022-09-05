@@ -8,7 +8,7 @@ function logInUser(form){
     xhr = new XMLHttpRequest();
     xhr.onreadystatechange = sendDataCallback;
     // asynchronous requests
-    xhr.open("GET", "logIn", false);
+    xhr.open("POST", "logIn", false);
 
     var userData = new FormData();
     userData.append("email", document.getElementById("userEmail").value);
@@ -16,7 +16,8 @@ function logInUser(form){
 
     xhr.send(userData);
 
-    console.log(xhr.response);
+    dataDiv = document.getElementById('loggedInStatus');
+    dataDiv.innerHTML = xhr.responseText;
 }
 
 function signUpUser(){
@@ -32,7 +33,6 @@ function signUpUser(){
     xhr.send(userData);
 
     dataDiv = document.getElementById('loggedInStatus');
-    // Set current data text
     dataDiv.innerHTML = xhr.responseText;
 }
 

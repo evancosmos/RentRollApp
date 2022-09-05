@@ -1,14 +1,12 @@
 #Read text from PDFs
 from crypt import methods
-from pdfminer.high_level import extract_text, extract_text_to_fp
+from pdfminer.high_level import extract_text
 from pdfminer.layout import LAParams
 
 import json
-import os
 
 #Hosting Service
 import firebase_admin
-from firebase_admin import credentials
 from firebase_admin import db
 
 class rentRollEntity: #Individual Items on a Rent Roll

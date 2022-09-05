@@ -71,7 +71,7 @@ def signup():
     except:
         return {'message': 'Error creating user'},400
 
-@app.route('/logIn', methods=['GET'])
+@app.route('/logIn', methods=['POST'])
 def logIn():
     firebaseConnect()
     email = request.form.get('email')
@@ -79,8 +79,8 @@ def logIn():
     if email is None or password is None:
         return {'message': 'Error missing email or password'},400
     try:
-        #Search firebase for user here.
-        return {'message': f'Successfully created logged in user'} ,200
+        userRecord = auth.get_user_by_email(email)
+        return {'message': f'Successfully created logged in '} ,200
     except:
         return {'message': 'Could not log in user'},400
 
