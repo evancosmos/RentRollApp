@@ -14,7 +14,7 @@ from firebase_admin import credentials, auth
 
 import os
 
-#TODO: Optimize ODR reading, Add user accounts.
+#TODO: Optimize ODR reading, Finish SignUp/LogIn, Display listings of logged in user.
 
 UPLOAD_FOLDER = './backend/'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
@@ -33,7 +33,7 @@ def helloworld():
 
 @app.route("/retriveListings", methods=["GET"])
 def listings():
-    #Get the listing for the current user
+    #TODO: Get the listings for the signed in User
     firebaseConnect()
     ret = FirebaseToJSON("TestItem")
     return flask.jsonify(ret)
@@ -70,6 +70,19 @@ def signup():
         return {'message': f'Successfully created user {user.uid}'},200
     except:
         return {'message': 'Error creating user'},400
+
+@app.route('/logIn', methods=['GET'])
+def logIn():
+    firebaseConnect()
+    email = request.form.get('email')
+    password = request.form.get('password')
+    if email is None or password is None:
+        return {'message': 'Error missing email or password'},400
+    try:
+        #Search firebase for user here.
+        return {'message': f'Successfully created logged in user'} ,200
+    except:
+        return {'message': 'Could not log in user'},400
 
 def firebaseConnect():
     if not firebase_admin._apps:

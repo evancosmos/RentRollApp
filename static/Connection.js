@@ -4,17 +4,32 @@
 
 var xhr = null;
 
-function signUpUser(){
+function logInUser(form){
+    xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = sendDataCallback;
+    // asynchronous requests
+    xhr.open("GET", "logIn", false);
+
+    var userData = new FormData(form);
+
+    xhr.send(userData);
+
+    console.log(xhr.response);
+}
+
+function signUpUser(form){
     xhr = new XMLHttpRequest();
     xhr.onreadystatechange = sendDataCallback;
     // asynchronous requests
     xhr.open("POST", "signUp", true);
 
-    var userData = new FormData();
-    userData.append("email", "fakeemail@live.ca")
-    userData.append("password", "apple123")
+    var userData = new FormData(form);
+    //userData.append("email", "fakeemail@live.ca")
+    //userData.append("password", "apple123")
 
     xhr.send(userData);
+
+    console.log(xhr.response);
 }
 
 function dataCallback() {

@@ -11,21 +11,33 @@
     <script src="{{ url_for('static', filename='Connection.js') }}"></script>
 
     <body>
-        <button id="signInBtn" onclick="signUpUser()">Sign in here</button>
+        <div class="boxDiv">
+            <form onsubmit="return false;">
+                <input type="email" id="userEmail" placeholder="Enter your email">
+                <input type="password" id="userPass" placeholder="Enter your password">
+                <button id="signInBtn" onclick="signUpUser(this.form)">Sign up</button>
+                <button id="signInBtn" onclick="logInUser(this.form)">Log in</button>
+            </form>
+            <div id="loggedInStatus">You are currently not logged in</div>
+        </div>
 
-        <label for="baseRollTemplates">What template are you uploading?</label>
-        <select name="baseRollTemplates" id="BRT">
-            <option>Crestwell</option>
-            <option>CBRE</option>
-            <option>Affortable Housing Societies</option>
-            <option>Fir Apts</option>
-        </select>
+        <div class="boxDiv">
+            <label for="baseRollTemplates">What template are you uploading?</label>
+            <select name="baseRollTemplates" id="BRT">
+                <option>Crestwell</option>
+                <option>CBRE</option>
+                <option>Affortable Housing Societies</option>
+                <option>Fir Apts</option>
+            </select>
+        </div>
 
-        <div>Choose a rent roll to read</div>
-        <form enctype = "multipart/form-data" onsubmit="return false;">
-            <input id="file" type="file" name="static_file" />
-            <button id="upload-button" onclick="sendData(this.form)"> Upload </button>
-        </form>
+        <div class="boxDiv">
+            <div>Choose a rent roll to read</div>
+            <form enctype = "multipart/form-data" onsubmit="return false;">
+                <input id="file" type="file" name="static_file" />
+                <button id="upload-button" onclick="sendData(this.form)"> Upload </button>
+            </form>
+        </div>
         
         <pre id="displayRoll">This is where the result will be displayed </pre>
 
