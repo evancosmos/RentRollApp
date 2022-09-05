@@ -10,26 +10,30 @@ function logInUser(form){
     // asynchronous requests
     xhr.open("GET", "logIn", false);
 
-    var userData = new FormData(form);
+    var userData = new FormData();
+    userData.append("email", document.getElementById("userEmail").value);
+    userData.append("password", document.getElementById("userPass").value);
 
     xhr.send(userData);
 
     console.log(xhr.response);
 }
 
-function signUpUser(form){
+function signUpUser(){
     xhr = new XMLHttpRequest();
     xhr.onreadystatechange = sendDataCallback;
     // asynchronous requests
-    xhr.open("POST", "signUp", true);
+    xhr.open("POST", "signUp", false);
 
-    var userData = new FormData(form);
-    //userData.append("email", "fakeemail@live.ca")
-    //userData.append("password", "apple123")
+    var userData = new FormData();
+    userData.append("email", document.getElementById("userEmail").value);
+    userData.append("password", document.getElementById("userPass").value);
 
     xhr.send(userData);
 
-    console.log(xhr.response);
+    dataDiv = document.getElementById('loggedInStatus');
+    // Set current data text
+    dataDiv.innerHTML = xhr.responseText;
 }
 
 function dataCallback() {
