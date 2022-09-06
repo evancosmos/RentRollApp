@@ -16,11 +16,9 @@ import os
 
 #TODO: Optimize ODR reading, Finish SignUp/LogIn, Display listings of logged in user.
 
-UPLOAD_FOLDER = './backend/'
 ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CORS(app)
 
 def allowed_file(filename):
@@ -80,6 +78,7 @@ def logIn():
         return {'message': 'Error missing email or password'},400
     try:
         userRecord = auth.get_user_by_email(email)
+        newToken = auth.create_custom_token(userRecord.getUid())
         return {'message': f'Successfully created logged in '} ,200
     except:
         return {'message': 'Could not log in user'},400
