@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.4/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.9.4/firebase-auth.js";
 
 const firebaseConfig = {
     "apiKey": "AIzaSyC57KFHH7nQl_rAcfwmy7BGy8vdqFSmzLo",
@@ -16,19 +16,45 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth();
 
+document.getElementById("signInBtn").addEventListener('click', createUser)
+document.getElementById("logInBtn").addEventListener('click', logInUser)
+
 function createUser(){
     
     var email = document.getElementById("userEmail").value
     var password = document.getElementById("userPass").value
+    var dataDiv = document.getElementById('loggedInStatus');
+
     createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        // ...
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
+        .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            
+            dataDiv.innerHTML = "Welcome " + user.email
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            dataDiv.innerHTML = errorMessage
+    });
+}
+
+function logInUser(){
+    
+    var email = document.getElementById("userEmail").value
+    var password = document.getElementById("userPass").value
+    var dataDiv = document.getElementById('loggedInStatus');
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed in 
+            const user = userCredential.user;
+            
+            dataDiv.innerHTML = "Welcome " + user.email
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            dataDiv.innerHTML = errorMessage
     });
 }

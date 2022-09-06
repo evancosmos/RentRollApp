@@ -4,38 +4,6 @@
 
 var xhr = null;
 
-function logInUser(form){
-    xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = sendDataCallback;
-    // asynchronous requests
-    xhr.open("POST", "logIn", false);
-
-    var userData = new FormData();
-    userData.append("email", document.getElementById("userEmail").value);
-    userData.append("password", document.getElementById("userPass").value);
-
-    xhr.send(userData);
-
-    dataDiv = document.getElementById('loggedInStatus');
-    dataDiv.innerHTML = xhr.responseText;
-}
-
-function signUpUser(){
-    xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = sendDataCallback;
-    // asynchronous requests
-    xhr.open("POST", "signUp", false);
-
-    var userData = new FormData();
-    userData.append("email", document.getElementById("userEmail").value);
-    userData.append("password", document.getElementById("userPass").value);
-
-    xhr.send(userData);
-
-    dataDiv = document.getElementById('loggedInStatus');
-    dataDiv.innerHTML = xhr.responseText;
-}
-
 function dataCallback() {
     // Check response is ready or not
     if (xhr.readyState == 4 && xhr.status == 200) {

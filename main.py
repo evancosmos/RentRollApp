@@ -53,36 +53,6 @@ def upload_file():
     resp = {"success": True}
     return flask.jsonify(resp), 200
 
-@app.route('/signUp', methods=['POST'])
-def signup():
-    firebaseConnect()
-    email = request.form.get('email')
-    password = request.form.get('password')
-    if email is None or password is None:
-        return {'message': 'Error missing email or password'},400
-    try:
-        user = auth.create_user(
-               email=email,
-               password=password
-        )
-        return {'message': f'Successfully created user {user.uid}'},200
-    except:
-        return {'message': 'Error creating user'},400
-
-@app.route('/logIn', methods=['POST'])
-def logIn():
-    firebaseConnect()
-    email = request.form.get('email')
-    password = request.form.get('password')
-    if email is None or password is None:
-        return {'message': 'Error missing email or password'},400
-    try:
-        userRecord = auth.get_user_by_email(email)
-        newToken = auth.create_custom_token(userRecord.getUid())
-        return {'message': f'Successfully created logged in '} ,200
-    except:
-        return {'message': 'Could not log in user'},400
-
 def firebaseConnect():
     if not firebase_admin._apps:
         credPath = os.path.dirname(os.path.abspath(__file__)) + "/firebasekeys.json"
