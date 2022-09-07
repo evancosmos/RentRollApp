@@ -1,15 +1,20 @@
 #Modified version of table-extraction from https://github.com/fazlurnu/Text-Extraction-Table-Image
 
+from codecs import utf_8_decode
 import json
+from pickletools import uint8
 
-from preprocessing import get_grayscale, get_binary, draw_text, detect
 from ROI_selection import detect_lines, get_ROI
+from preprocessing import get_grayscale, get_binary, draw_text, detect
 import cv2 as cv
+import numpy as np
 
-def OCR(filename, display = False, print_text = False, write = False):
+def OCR(fileObject, display = False, print_text = False, write = False):
     
-    src = cv.imread(cv.samples.findFile(filename))
-    
+    #src = cv.imread(cv.samples.findFile(fileObject))
+    fileObject = np.asarray(bytearray(fileObject))
+    src = cv.imdecode(fileObject, cv.IMREAD_COLOR)
+
     horizontal, vertical = detect_lines(src, minLinLength=300, display=False, write = True)
     
     ## invert area (all 0 for no inverted area)
@@ -91,4 +96,5 @@ def OCR(filename, display = False, print_text = False, write = False):
     return 0
     
 if __name__ == "__main__":
-    OCR("../TestRolls/1650 lease rent roll.png")
+    with open("../TestRolls/1650 lease rent roll.png", "rb") as f:
+        OCR(f.read(), display=True)

@@ -2,6 +2,7 @@
 from crypt import methods
 from io import BytesIO
 from backend.PDFreaders import readPDFCrestWell, FirebaseToJSON
+from backend.OCR2 import OCR
 
 #Web App framework for python
 from flask import Flask, request, render_template
@@ -16,14 +17,10 @@ import os
 
 #TODO: Optimize ODR reading, Finish SignUp/LogIn, Display listings of logged in user.
 
-ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg'}
+ALLOWED_IMAGES = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__)
 CORS(app)
-
-def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route("/", methods= ['GET', 'POST'])
 def helloworld():
@@ -42,14 +39,25 @@ def upload_file():
         print("Got request in static files") 
         print(request.files['static_file'])
         f = request.files['static_file']
-        if((f.filename)[-3:] not in ALLOWED_EXTENSIONS):
-            resp = {"success": False, "response": "Not a valid file type"}
+
+        if((f.filename)[-3:] in ALLOWED_IMAGES): #OCR for Images
+            fObj = BytesIO(f.stream.read())
+            OCR(fObj)
+            resp = {"success": True, "response": "file saved!"}
             return flask.jsonify(resp)
-        fObj = BytesIO(f.stream.read())
-        firebaseConnect()
-        readPDFCrestWell(fObj)
-        resp = {"success": True, "response": "file saved!"}
-        return flask.jsonify(resp)
+        
+        elif((f.filename)[-3:] == "pdf"): #PDFminer.six for PDFS
+            fObj = BytesIO(f.stream.read())
+            firebaseConnect()
+            readPDFCrestWell(fObj)
+            resp = {"success": True, "response": "file saved!"}
+            return flask.jsonify(resp)
+
+        else: #Invalid file type
+            resp = {"success": False, "response": "Not a valid file type"}
+            return flask.jsonify(resp), 400
+
+    #GET request handler
     resp = {"success": True}
     return flask.jsonify(resp), 200
 
