@@ -50,6 +50,54 @@ class rentRoll: #The collection of items on a rent roll
             id += 1
         return newMasterDict
 
+def readPDFColliers(fObj):
+    LAPParms = LAParams(line_overlap=0.5, char_margin=2, line_margin=0.4, word_margin=0.1, boxes_flow=0.2, detect_vertical=False, all_texts=False)
+    text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
+    textLines = text.splitlines()
+
+    allRoll = rentRoll()
+    itemCount = 0
+    brCount = 0
+    newRoll = rentRollEntity()
+
+    for line in textLines:
+        #print(line)
+        if(line == ''):
+            itemCount = itemCount - 1
+        elif(line[:4].isnumeric()): #A new item is made. Address
+            newRoll = rentRollEntity()
+            newRoll.leaseNum = line
+        elif(itemCount == 1): #Op Name
+            newRoll.operatingName = line
+        elif(itemCount == 2): #Sqr Ft
+            newRoll.sqrFt = line
+        elif(itemCount == 3): #Commencement Date
+            newRoll.status = line
+        elif(itemCount == 4): #Expiration Date
+            pass
+        elif(itemCount == 5): #Term
+            newRoll.renOption = line
+        elif(itemCount == 6): #Escalation Date
+            pass
+        elif(itemCount == 7): #Base Rent
+            newRoll.leaseExpire = line
+        elif(itemCount == 8): #Current Annual Rate
+            pass
+        elif(itemCount == 9): #Renewal Options
+            newRoll.renNotice = line
+        elif(itemCount == 10):
+            pass
+        else:
+            itemCount = itemCount - 1
+        itemCount += 1
+
+    allRoll.addRoll(newRoll)
+
+    #Put new item in database
+    #JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
+
+    return allRoll
+
 def readPDFCrestWell(fObj): #For this template, a new item is begins when an line starts with "TCC"
     #For this template, I have to iterate twice to get pdfminersix to read Base rent correctly. See difference in LAPParms
 
@@ -151,9 +199,9 @@ def FirebaseToJSON(DataBaseRef):
     return ref.get()
 
 if __name__ == "__main__":
-    allRoll = readPDFCrestWell("../TestRolls/Crestwell/Broadway - Commercial 2016 Base Rent Roll (Revised).pdf")
+    allRoll = readPDFColliers("../TestRolls/Colliers/Broadway Commercial Rent Roll.pdf")
 
-    out_file = open("out.json", "w")
-    json.dump(allRoll.retMasterDict(), out_file, ensure_ascii=False, indent=0, separators=(',', ':'))
-    out_file.close()
+    #out_file = open("out.json", "w")
+    #json.dump(allRoll.retMasterDict(), out_file, ensure_ascii=False, indent=0, separators=(',', ':'))
+    #out_file.close()
     

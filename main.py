@@ -15,7 +15,7 @@ from firebase_admin import credentials, auth
 
 import os
 
-#TODO: Optimize ODR reading, Finish SignUp/LogIn, Display listings of logged in user.
+#TODO: Optimize ODR reading, Display listings of logged in user, Keep adding 
 
 ALLOWED_IMAGES = {'png', 'jpg', 'jpeg'}
 

@@ -4,8 +4,8 @@ from codecs import utf_8_decode
 import json
 from pickletools import uint8
 
-from ROI_selection import detect_lines, get_ROI
-from preprocessing import get_grayscale, get_binary, draw_text, detect
+from .ROI_selection import detect_lines, get_ROI
+from .preprocessing import get_grayscale, get_binary, draw_text, detect
 import cv2 as cv
 import numpy as np
 
@@ -96,5 +96,6 @@ def OCR(fileObject, display = False, print_text = False, write = False):
     return 0
     
 if __name__ == "__main__":
-    with open("../TestRolls/1650 lease rent roll.png", "rb") as f:
-        OCR(f.read(), display=True)
+    pass #Due to file pathing, calls to OCR should only be done through main
+    #with open("../TestRolls/1650 lease rent roll.png", "rb") as f:
+    #    OCR(f.read(), display=True)
