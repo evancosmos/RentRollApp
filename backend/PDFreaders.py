@@ -98,7 +98,7 @@ def readPDFColliers(fObj):
 
     return allRoll
 
-def readPDFCrestWell(fObj): #For this template, a new item is begins when an line starts with "TCC"
+def readPDFCrestWell(fObj, user): #For this template, a new item is begins when an line starts with "TCC"
     #For this template, I have to iterate twice to get pdfminersix to read Base rent correctly. See difference in LAPParms
 
     LAPParmsBR = LAParams(0.5, 2, 0.2, 0.1, None, False, False)
@@ -185,11 +185,12 @@ def readPDFCrestWell(fObj): #For this template, a new item is begins when an lin
     allRoll.addRoll(newRoll)
 
     #Put new item in database
-    JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
+    JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), user)
 
     return allRoll
 
 def JSONToFirebase(JSONstr, DataBaseRef):
+    print(DataBaseRef)
     ref = db.reference(DataBaseRef)
     ref.set(json.loads(JSONstr))
     return

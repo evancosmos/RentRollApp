@@ -16,6 +16,9 @@ const app = initializeApp(firebaseConfig);
 
 const auth = getAuth();
 
+var user = null;
+export { user };
+
 document.getElementById("signInBtn").addEventListener('click', createUser)
 document.getElementById("logInBtn").addEventListener('click', logInUser)
 
@@ -28,7 +31,7 @@ function createUser(){
     createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
-            const user = userCredential.user;
+            user = userCredential.user;
             
             dataDiv.innerHTML = "Welcome " + user.email
         })
@@ -48,7 +51,7 @@ function logInUser(){
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
             // Signed in 
-            const user = userCredential.user;
+            user = userCredential.user;
             
             dataDiv.innerHTML = "Welcome " + user.email
         })

@@ -30,7 +30,8 @@ def helloworld():
 def listings():
     #TODO: Get the listings for the signed in User
     firebaseConnect()
-    ret = FirebaseToJSON("TestItem")
+    user = request.headers.get("UserSending")
+    ret = FirebaseToJSON(user)
     return flask.jsonify(ret)
 
 @app.route('/fileSend', methods=['GET', 'POST'])
@@ -39,6 +40,7 @@ def upload_file():
         print("Got request in static files") 
         print(request.files['static_file'])
         f = request.files['static_file']
+        user = request.headers.get("UserSending")
 
         if((f.filename)[-3:] in ALLOWED_IMAGES): #OCR for Images
             fObj = BytesIO(f.stream.read())
@@ -49,7 +51,7 @@ def upload_file():
         elif((f.filename)[-3:] == "pdf"): #PDFminer.six for PDFS
             fObj = BytesIO(f.stream.read())
             firebaseConnect()
-            readPDFCrestWell(fObj)
+            readPDFCrestWell(fObj, user)
             resp = {"success": True, "response": "file saved!"}
             return flask.jsonify(resp)
 
