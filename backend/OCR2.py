@@ -1,15 +1,22 @@
 #Modified version of table-extraction from https://github.com/fazlurnu/Text-Extraction-Table-Image
+from pytesseract import pytesseract
 
 from codecs import utf_8_decode
 import json
 from pickletools import uint8
 
-from .ROI_selection import detect_lines, get_ROI
-from .preprocessing import get_grayscale, get_binary, draw_text, detect
+from ROI_selection import detect_lines, get_ROI
+from preprocessing import get_grayscale, get_binary, draw_text, detect
 import cv2 as cv
 import numpy as np
 
-def OCR(fileObject, display = False, print_text = False, write = False):
+def basicOCR(fileObject):
+    fileObject = np.asarray(bytearray(fileObject))
+    src = cv.imdecode(fileObject, cv.IMREAD_GRAYSCALE)
+    text = pytesseract.image_to_string(src, config="pwm 11 load_system_dawg false load_freq_dawg false")
+    print(text)
+
+def OCR(fileObject, display = False, print_text = False, write = False): #This OCR is for table extraction. Still need a way to know coloum headers ahead of time.
     
     #src = cv.imread(cv.samples.findFile(fileObject))
     fileObject = np.asarray(bytearray(fileObject))
@@ -96,6 +103,7 @@ def OCR(fileObject, display = False, print_text = False, write = False):
     return 0
     
 if __name__ == "__main__":
-    pass #Due to file pathing, calls to OCR should only be done through main
-    #with open("../TestRolls/1650 lease rent roll.png", "rb") as f:
-    #    OCR(f.read(), display=True)
+    #pass #Due to file pathing, calls to OCR should only be done through main
+    with open("../TestRolls/phonecamera.jpeg", "rb") as f:
+        #OCR(f.read(), print_text=True)
+        basicOCR(f.read())

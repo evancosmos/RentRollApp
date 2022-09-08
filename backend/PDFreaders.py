@@ -50,6 +50,34 @@ class rentRoll: #The collection of items on a rent roll
             id += 1
         return newMasterDict
 
+def readPDFWestBroad(fObj):
+    LAPParms = LAParams(line_overlap=0.1, char_margin=0.1, line_margin=0.1, word_margin=0.1, boxes_flow=None, detect_vertical=False, all_texts=False)
+    text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
+    textLines = text.splitlines()
+
+    valueSubDict = {"Rental Income": "", "Recoverable Operating Costs":"", "Admin Fee":"", "Other":""}
+    newDict = {"Budget 2017": valueSubDict, "Budget 2016" : valueSubDict, "Actual 2015" : valueSubDict, "Actual 2014" : valueSubDict, "Actual 2013" : valueSubDict}
+    itemCount = 0
+    newRoll = rentRollEntity()
+
+    for line in textLines[:200]:
+        print(line)
+        if(line == ''):
+            pass
+        elif(line == "Rental Income"): #A new item is made. Address
+            pass
+        elif(line == "Recoverable Operating Costs"):
+            pass
+        elif(line == "Admin Fee"):
+            pass
+        elif(line == "Other"):
+            pass
+
+    #Put new item in database
+    #JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
+
+    return newDict
+
 def readPDFColliers(fObj):
     LAPParms = LAParams(line_overlap=0.5, char_margin=2, line_margin=0.4, word_margin=0.1, boxes_flow=0.2, detect_vertical=False, all_texts=False)
     text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
@@ -200,7 +228,8 @@ def FirebaseToJSON(DataBaseRef):
     return ref.get()
 
 if __name__ == "__main__":
-    allRoll = readPDFColliers("../TestRolls/Colliers/Broadway Commercial Rent Roll.pdf")
+    with open("../TestRolls/Operating Statements/Broadway - NOI - Commercial.pdf", "rb") as f:
+        allRoll = readPDFWestBroad(f)
 
     #out_file = open("out.json", "w")
     #json.dump(allRoll.retMasterDict(), out_file, ensure_ascii=False, indent=0, separators=(',', ':'))

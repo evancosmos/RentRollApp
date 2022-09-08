@@ -1,7 +1,7 @@
 from pytesseract import pytesseract
 
 import cv2 as cv
-from .ROI_selection import detect_lines, get_ROI
+from ROI_selection import detect_lines, get_ROI
 import numpy as np
 
 def get_grayscale(image):

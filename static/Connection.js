@@ -66,7 +66,7 @@ function sendData() {
             xhr.setRequestHeader("UserSending", "notsignedin");
         }
         else{
-            xhr.setRequestHeader("UserSending", user.uid);
+            xhr.setRequestHeader("UserSending", user.email);
         }
         
 
