@@ -60,18 +60,45 @@ def readPDFWestBroad(fObj):
     itemCount = 0
     newRoll = rentRollEntity()
 
+    #What item we are looking at based on bools
+    rentalIncomeBool = False
+    recoverableOpCostBool = False
+    adminFee = False
+    otherBool = False
+
     for line in textLines[:200]:
         print(line)
         if(line == ''):
             pass
+        if(rentalIncomeBool):
+            itemCount-= 1
+            if(itemCount < 1):
+                rentalIncomeBool = False
+        if(recoverableOpCostBool):
+            itemCount-= 1
+            if(itemCount < 1):
+                recoverableOpCostBool = False
+        if(adminFee):
+            itemCount-= 1
+            if(itemCount < 1):
+                adminFee = False
+        if(otherBool):
+            itemCount-= 1
+            if(itemCount < 1):
+                otherBool = False
+
         elif(line == "Rental Income"): #A new item is made. Address
-            pass
+            rentalIncomeBool = True
+            itemCount = 5
         elif(line == "Recoverable Operating Costs"):
-            pass
+            recoverableOpCostBool = True
+            itemCount = 5
         elif(line == "Admin Fee"):
-            pass
+            adminFee = True
+            itemCount = 5
         elif(line == "Other"):
-            pass
+            otherBool = True
+            itemCount = 5
 
     #Put new item in database
     #JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
