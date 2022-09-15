@@ -9,6 +9,37 @@ import json
 import firebase_admin
 from firebase_admin import db
 
+class operatingStatementYear:
+    def __init__(self) -> None:
+        self.rentalIncome = ""
+        self.recoverableOperatingCosts = ""
+        self.adminFee = ""
+        self.other = ""
+        self.parkadeOperations = ""
+        self.totalOperatingIncome = ""
+        self.year = ""
+
+    def retAsDict(self):
+        newDict = {
+            "Rental Income": self.rentalIncome,
+            "Recoverable Operating Costs": self.recoverableOperatingCosts,
+            "Admin Fee": self.adminFee,
+            "Other": self.other,
+            "Parkcade Operations": self.parkadeOperations,
+            "Total Operating Income": self.totalOperatingIncome,
+        }
+        return newDict
+
+class operatingStatment:
+    def __init__(self) -> None:
+        self.opYears = {}
+
+    def addYear(self, opStatementYear: operatingStatementYear):
+        self.opYears[opStatementYear.year] = opStatementYear.retAsDict()
+
+    def getDict(self):
+        return self.opYears
+
 class rentRollEntity: #Individual Items on a Rent Roll
     def __init__(self):
         self.leaseNum = ""
@@ -55,10 +86,19 @@ def readPDFWestBroad(fObj):
     text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
     textLines = text.splitlines()
 
-    valueSubDict = {"Rental Income": "", "Recoverable Operating Costs":"", "Admin Fee":"", "Other":""}
-    newDict = {"Budget 2017": valueSubDict, "Budget 2016" : valueSubDict, "Actual 2015" : valueSubDict, "Actual 2014" : valueSubDict, "Actual 2013" : valueSubDict}
+    op2017 = operatingStatementYear()
+    op2017.year = 2017
+    op2016 = operatingStatementYear()
+    op2016.year = 2016
+    op2015 = operatingStatementYear()
+    op2015.year = 2015
+    op2014 = operatingStatementYear()
+    op2014.year = 2014
+    op2013 = operatingStatementYear()
+    op2013.year = 2013
+
+    masterDict = {"Budget 2017": {}, "Budget 2016" : {}, "Actual 2015" : {}, "Actual 2014" : {}, "Actual 2013" : {}}
     itemCount = 0
-    newRoll = rentRollEntity()
 
     #What item we are looking at based on bools
     rentalIncomeBool = False
@@ -66,27 +106,66 @@ def readPDFWestBroad(fObj):
     adminFee = False
     otherBool = False
 
-    for line in textLines[:200]:
-        print(line)
+    for line in textLines[:200]: #Since we're reading left to right things look a little ugly in here
+        #print(line)
         if(line == ''):
             pass
-        if(rentalIncomeBool):
+        elif(rentalIncomeBool):
+            if(itemCount == 5):
+                op2017.rentalIncome = line
+            elif(itemCount == 4):
+                op2016.rentalIncome = line
+            elif(itemCount == 3):
+                op2015.rentalIncome = line
+            elif(itemCount == 2):
+                op2014.rentalIncome = line
+            elif(itemCount == 1):
+                op2013.rentalIncome = line
             itemCount-= 1
             if(itemCount < 1):
                 rentalIncomeBool = False
-        if(recoverableOpCostBool):
+        elif(recoverableOpCostBool):
+            if(itemCount == 5):
+                op2017.recoverableOperatingCosts = line
+            elif(itemCount == 4):
+                op2016.recoverableOperatingCosts = line
+            elif(itemCount == 3):
+                op2015.recoverableOperatingCosts = line
+            elif(itemCount == 2):
+                op2014.recoverableOperatingCosts = line
+            elif(itemCount == 1):
+                op2013.recoverableOperatingCosts = line
             itemCount-= 1
             if(itemCount < 1):
                 recoverableOpCostBool = False
-        if(adminFee):
+        elif(adminFee):
+            if(itemCount == 5):
+                op2017.adminFee = line
+            elif(itemCount == 4):
+                op2016.adminFee = line
+            elif(itemCount == 3):
+                op2015.adminFee = line
+            elif(itemCount == 2):
+                op2014.adminFee = line
+            elif(itemCount == 1):
+                op2013.adminFee = line
             itemCount-= 1
             if(itemCount < 1):
                 adminFee = False
-        if(otherBool):
+        elif(otherBool):
+            if(itemCount == 5):
+                op2017.other = line
+            elif(itemCount == 4):
+                op2016.other = line
+            elif(itemCount == 3):
+                op2015.other = line
+            elif(itemCount == 2):
+                op2014.other = line
+            elif(itemCount == 1):
+                op2013.other = line
             itemCount-= 1
             if(itemCount < 1):
                 otherBool = False
-
         elif(line == "Rental Income"): #A new item is made. Address
             rentalIncomeBool = True
             itemCount = 5
@@ -103,7 +182,14 @@ def readPDFWestBroad(fObj):
     #Put new item in database
     #JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
 
-    return newDict
+    masterDict = operatingStatment()
+    masterDict.addYear(op2017)
+    masterDict.addYear(op2016)
+    masterDict.addYear(op2015)
+    masterDict.addYear(op2014)
+    masterDict.addYear(op2013)
+    print(masterDict.getDict())
+    return
 
 def readPDFColliers(fObj):
     LAPParms = LAParams(line_overlap=0.5, char_margin=2, line_margin=0.4, word_margin=0.1, boxes_flow=0.2, detect_vertical=False, all_texts=False)
