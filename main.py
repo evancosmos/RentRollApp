@@ -1,8 +1,8 @@
 #PDF Readers
 from crypt import methods
 from io import BytesIO
-from backend.PDFreaders import readPDFCrestWell, FirebaseToJSON
-from backend.OCR2 import OCR
+from backend.PDFreaders import chooseReader, FirebaseToJSON
+#from backend.OCR2 import OCR
 
 #Web App framework for python
 from flask import Flask, request, render_template
@@ -44,17 +44,19 @@ def upload_file():
 
         if((f.filename)[-3:] in ALLOWED_IMAGES): #OCR for Images
             fObj = BytesIO(f.stream.read())
-            OCR(fObj)
+            #OCR(fObj)
             resp = {"success": True, "response": "file saved!"}
             return flask.jsonify(resp)
         
         elif((f.filename)[-3:] == "pdf"): #PDFminer.six for PDFS
             fObj = BytesIO(f.stream.read())
             firebaseConnect()
-            readPDFCrestWell(fObj, user)
-            resp = {"success": True, "response": "file saved!"}
-            return flask.jsonify(resp)
-
+            validBool = chooseReader(fObj, user)
+            if(validBool):
+                resp = {"success": True, "response": "file saved!"}
+                return flask.jsonify(resp)
+            resp = {"success": False, "response": "Could not understand your file layout"}
+            return flask.jsonify(resp), 400
         else: #Invalid file type
             resp = {"success": False, "response": "Not a valid file type"}
             return flask.jsonify(resp), 400

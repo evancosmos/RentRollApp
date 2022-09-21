@@ -1,5 +1,7 @@
 #Read text from PDFs
+from asyncore import read
 from crypt import methods
+from doctest import master
 from pdfminer.high_level import extract_text
 from pdfminer.layout import LAParams
 
@@ -9,36 +11,7 @@ import json
 import firebase_admin
 from firebase_admin import db
 
-class operatingStatementYear:
-    def __init__(self) -> None:
-        self.rentalIncome = ""
-        self.recoverableOperatingCosts = ""
-        self.adminFee = ""
-        self.other = ""
-        self.parkadeOperations = ""
-        self.totalOperatingIncome = ""
-        self.year = ""
-
-    def retAsDict(self):
-        newDict = {
-            "Rental Income": self.rentalIncome,
-            "Recoverable Operating Costs": self.recoverableOperatingCosts,
-            "Admin Fee": self.adminFee,
-            "Other": self.other,
-            "Parkcade Operations": self.parkadeOperations,
-            "Total Operating Income": self.totalOperatingIncome,
-        }
-        return newDict
-
-class operatingStatment:
-    def __init__(self) -> None:
-        self.opYears = {}
-
-    def addYear(self, opStatementYear: operatingStatementYear):
-        self.opYears[opStatementYear.year] = opStatementYear.retAsDict()
-
-    def getDict(self):
-        return self.opYears
+#TODO: Replace rent roll classes with dicts for readability.
 
 class rentRollEntity: #Individual Items on a Rent Roll
     def __init__(self):
@@ -81,117 +54,49 @@ class rentRoll: #The collection of items on a rent roll
             id += 1
         return newMasterDict
 
-def readPDFWestBroad(fObj):
+def readPDFWestBroad(fObj, user):
     LAPParms = LAParams(line_overlap=0.1, char_margin=0.1, line_margin=0.1, word_margin=0.1, boxes_flow=None, detect_vertical=False, all_texts=False)
     text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
     textLines = text.splitlines()
 
-    op2017 = operatingStatementYear()
-    op2017.year = 2017
-    op2016 = operatingStatementYear()
-    op2016.year = 2016
-    op2015 = operatingStatementYear()
-    op2015.year = 2015
-    op2014 = operatingStatementYear()
-    op2014.year = 2014
-    op2013 = operatingStatementYear()
-    op2013.year = 2013
-
     masterDict = {"Budget 2017": {}, "Budget 2016" : {}, "Actual 2015" : {}, "Actual 2014" : {}, "Actual 2013" : {}}
-    itemCount = 0
+    yearMax = len(masterDict)
+    
+    #Loop vars
+    itemLeftCount = 0
+    curHead = ""
 
-    #What item we are looking at based on bools
-    rentalIncomeBool = False
-    recoverableOpCostBool = False
-    adminFee = False
-    otherBool = False
-
-    for line in textLines[:200]: #Since we're reading left to right things look a little ugly in here
+    for line in textLines: #Since we're reading left to right things look a little ugly in here
+        line = line.replace(",", "")
         #print(line)
         if(line == ''):
             pass
-        elif(rentalIncomeBool):
-            if(itemCount == 5):
-                op2017.rentalIncome = line
-            elif(itemCount == 4):
-                op2016.rentalIncome = line
-            elif(itemCount == 3):
-                op2015.rentalIncome = line
-            elif(itemCount == 2):
-                op2014.rentalIncome = line
-            elif(itemCount == 1):
-                op2013.rentalIncome = line
-            itemCount-= 1
-            if(itemCount < 1):
-                rentalIncomeBool = False
-        elif(recoverableOpCostBool):
-            if(itemCount == 5):
-                op2017.recoverableOperatingCosts = line
-            elif(itemCount == 4):
-                op2016.recoverableOperatingCosts = line
-            elif(itemCount == 3):
-                op2015.recoverableOperatingCosts = line
-            elif(itemCount == 2):
-                op2014.recoverableOperatingCosts = line
-            elif(itemCount == 1):
-                op2013.recoverableOperatingCosts = line
-            itemCount-= 1
-            if(itemCount < 1):
-                recoverableOpCostBool = False
-        elif(adminFee):
-            if(itemCount == 5):
-                op2017.adminFee = line
-            elif(itemCount == 4):
-                op2016.adminFee = line
-            elif(itemCount == 3):
-                op2015.adminFee = line
-            elif(itemCount == 2):
-                op2014.adminFee = line
-            elif(itemCount == 1):
-                op2013.adminFee = line
-            itemCount-= 1
-            if(itemCount < 1):
-                adminFee = False
-        elif(otherBool):
-            if(itemCount == 5):
-                op2017.other = line
-            elif(itemCount == 4):
-                op2016.other = line
-            elif(itemCount == 3):
-                op2015.other = line
-            elif(itemCount == 2):
-                op2014.other = line
-            elif(itemCount == 1):
-                op2013.other = line
-            itemCount-= 1
-            if(itemCount < 1):
-                otherBool = False
-        elif(line == "Rental Income"): #A new item is made. Address
-            rentalIncomeBool = True
-            itemCount = 5
-        elif(line == "Recoverable Operating Costs"):
-            recoverableOpCostBool = True
-            itemCount = 5
-        elif(line == "Admin Fee"):
-            adminFee = True
-            itemCount = 5
-        elif(line == "Other"):
-            otherBool = True
-            itemCount = 5
+        elif(itemLeftCount == (yearMax - 1)):
+            masterDict["Budget 2016"][curHead] = line
+            itemLeftCount -= 1
+        elif(itemLeftCount == (yearMax - 2)):
+            masterDict["Actual 2015"][curHead] = line
+            itemLeftCount -= 1
+        elif(itemLeftCount == (yearMax - 3)):
+            masterDict["Actual 2014"][curHead] = line
+            itemLeftCount -= 1
+        elif(itemLeftCount == (yearMax - 4)):
+            masterDict["Actual 2013"][curHead] = line
+            itemLeftCount -= 1
+        elif(line.isnumeric()):
+            masterDict["Budget 2017"][curHead] = line
+            itemLeftCount = yearMax - 1
+        else:
+            curHead = line
+            if(line == "ACTUAL "):
+                curHead = "Year"
 
     #Put new item in database
-    #JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
+    JSONToFirebase(json.dumps(masterDict, ensure_ascii=False, indent=0, separators=(',', ':')), user)
 
-    masterDict = operatingStatment()
-    masterDict.addYear(op2017)
-    masterDict.addYear(op2016)
-    masterDict.addYear(op2015)
-    masterDict.addYear(op2014)
-    masterDict.addYear(op2013)
-    print(masterDict.getDict())
-    return
+    return masterDict
 
-def readPDFColliers(fObj):
+def readPDFColliers(fObj, user):
     LAPParms = LAParams(line_overlap=0.5, char_margin=2, line_margin=0.4, word_margin=0.1, boxes_flow=0.2, detect_vertical=False, all_texts=False)
     text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
     textLines = text.splitlines()
@@ -235,7 +140,7 @@ def readPDFColliers(fObj):
     allRoll.addRoll(newRoll)
 
     #Put new item in database
-    #JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), "TestItem")
+    JSONToFirebase(json.dumps(allRoll.retMasterDict(), ensure_ascii=False, indent=0, separators=(',', ':')), user)
 
     return allRoll
 
@@ -340,11 +245,30 @@ def FirebaseToJSON(DataBaseRef):
     ref = db.reference(DataBaseRef)
     return ref.get()
 
+def chooseReader(fObj, user="notsignedin"):
+    LAPParms = LAParams(line_overlap=0.1, char_margin=0.1, line_margin=0.1, word_margin=0.1, boxes_flow=None, detect_vertical=False, all_texts=False)
+    text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
+
+    if(text[:8] == "West Bro"):
+        readPDFWestBroad(fObj, user)
+    elif(text[:8] == "Rent Rol"):
+        readPDFColliers(fObj, user)
+    elif(text[:8] == "Actuals "):
+        readPDFCrestWell(fObj, user)
+
+    return
+
 if __name__ == "__main__":
     with open("../TestRolls/Operating Statements/Broadway - NOI - Commercial.pdf", "rb") as f:
-        allRoll = readPDFWestBroad(f)
+        allRoll = chooseReader(f)
 
-    #out_file = open("out.json", "w")
-    #json.dump(allRoll.retMasterDict(), out_file, ensure_ascii=False, indent=0, separators=(',', ':'))
-    #out_file.close()
+    with open("../TestRolls/Colliers/Broadway Commercial Rent Roll.pdf", "rb") as f:
+        allRoll = chooseReader(f)
+
+    with open("../TestRolls/Crestwell/2018-05-16 - Depot 170 - Base Rent Roll.pdf", "rb") as f:
+        allRoll = chooseReader(f)
+
+    """ out_file = open("out.json", "w")
+    json.dump(allRoll, out_file, ensure_ascii=False, indent=0, separators=(',', ':'))
+    out_file.close() """
     
