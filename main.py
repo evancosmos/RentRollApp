@@ -52,11 +52,8 @@ def upload_file():
             fObj = BytesIO(f.stream.read())
             firebaseConnect()
             validBool = chooseReader(fObj, user)
-            if(validBool):
-                resp = {"success": True, "response": "file saved!"}
-                return flask.jsonify(resp)
-            resp = {"success": False, "response": "Could not understand your file layout"}
-            return flask.jsonify(resp), 400
+            resp = {"success": True, "response": "file saved!"}
+            return flask.jsonify(resp)
         else: #Invalid file type
             resp = {"success": False, "response": "Not a valid file type"}
             return flask.jsonify(resp), 400
