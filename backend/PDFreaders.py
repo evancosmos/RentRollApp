@@ -13,9 +13,23 @@ from firebase_admin import db
 
 #TODO: Add readers more templates.
 
-#For each rent roll, there are mutlbile tenants. For each tenant, extract this info to a python dictionary:
-#Operating Name, Unit, Base Rent, Monthly Rent, Annual Rent, Area, Start Date, End Date, Term, Escalation Date. See MS Teams for alternate names these might be under.
-#In the case of missing values add a blank string.
+#For each rent roll, we extract all information from a list. The data structure below is how info is stored.
+
+#Account
+#└── Listings
+#    └── Individual Rent Roll Tenants
+#        ├── Operating Name
+#        ├── Unit
+#        ├── Monthly Rent
+#        ├── Annual Rent
+#        ├── Area 
+#        ├── Term
+#        ├── Escalation Date
+#        └── Base Rent
+#            ├── Years
+#            ├── Begin Date
+#            ├── End Date
+#            └── Rate
 
 def readPDFWestBroad(fObj, user):
     LAPParms = LAParams(line_overlap=0.1, char_margin=0.1, line_margin=0.1, word_margin=0.1, boxes_flow=None, detect_vertical=False, all_texts=False)
