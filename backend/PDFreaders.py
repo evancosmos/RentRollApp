@@ -13,20 +13,20 @@ from firebase_admin import db
 
 #TODO: Add readers more templates.
 
-#For each rent roll, we extract all information from a list. The data structure below is how info is stored.
+#For each rent roll, we extract all information from a list. The data structure below is how info is stored. See MS teams for alternative names that appear.
 
 #Account
 #└── Listings
 #    └── Individual Rent Roll Tenants
 #        ├── Operating Name
-#        ├── Unit
+#        ├── Unit (Address)
 #        ├── Monthly Rent
 #        ├── Annual Rent
-#        ├── Area 
-#        ├── Term
+#        ├── Area
+#        ├── Term (Lease End)
 #        ├── Escalation Date
-#        └── Base Rent
-#            ├── Years
+#        └── Base Rent (1 or more periods)
+#            ├── Catagory
 #            ├── Begin Date
 #            ├── End Date
 #            └── Rate
@@ -73,16 +73,7 @@ def readPDFWestBroad(fObj, user):
 
     return masterDict
 
-
-    LAPParms = LAParams(line_overlap=0.5, char_margin=2, line_margin=0.4, word_margin=0.1, boxes_flow=0.2, detect_vertical=False, all_texts=False)
-    text = extract_text(fObj, None, None, 0, True, "utf-8", LAPParms)
-    textLines = text.splitlines()
-
-    return
-
-def readPDFCrestWell(fObj, user): #For this template, a new item is begins when an line starts with "TCC"
-    #For this template, I have to iterate twice to get pdfminersix to read Base rent correctly. See difference in LAPParms
-
+def readPDFCrestWell(fObj, user): #For this template, a new item is begins when an line starts with "TCC". I have to iterate twice to get pdfminersix to read Base rent correctly. See difference in LAPParms
     masterDict = {}
 
     LAPParmsBR = LAParams(0.5, 2, 0.2, 0.1, None, False, False)
@@ -109,7 +100,7 @@ def readPDFCrestWell(fObj, user): #For this template, a new item is begins when 
             oldLeaseNum = line
             loopedOnce = True
         elif((line[:9] in validRentInfo) and (loopedOnce)):
-            BaseRentEntityDict["Years"] = line
+            BaseRentEntityDict["Catagory"] = line
             brCount = 1
         elif(brCount == 1):
             BaseRentEntityDict["Begin Date"] = line
@@ -150,7 +141,7 @@ def readPDFCrestWell(fObj, user): #For this template, a new item is begins when 
         elif(itemCount == 6):
             pass
         elif(itemCount == 7):
-            curItemDict["Lease Expire"] = line
+            curItemDict["Term"] = line
         elif(itemCount == 8):
             pass
         elif(itemCount == 9):
@@ -158,7 +149,7 @@ def readPDFCrestWell(fObj, user): #For this template, a new item is begins when 
         elif(itemCount == 10):
             pass
         elif(itemCount == 11):
-            curItemDict["Ori Com"] = line
+            curItemDict["Orig Commencement"] = line
             itemCount = -1
             try:
                 curItemDict["Base Rent"] = BaseRentDict[curItemDict["Lease Number"]]
