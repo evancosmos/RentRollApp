@@ -1,7 +1,5 @@
 #Read text from PDFs
 from asyncore import read
-from crypt import methods
-from doctest import master
 from pdfminer.high_level import extract_text
 from pdfminer.layout import LAParams
 

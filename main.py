@@ -1,5 +1,4 @@
 #PDF Readers
-from crypt import methods
 from io import BytesIO
 from backend.PDFreaders import chooseReader, FirebaseToJSON
 #from backend.OCR2 import OCR
